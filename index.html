@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WebCraft V3 - Survival Update</title>
+    <title>WebCraft V4 - Ultimate Polish</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
         
@@ -16,97 +16,113 @@
         @media screen and (orientation: portrait) { #portrait-warning { display: flex; } #menu, #ui-layer, #mobile-controls, #inventory-ui, #death-screen, #chat-container { display: none !important; } }
 
         /* Главное меню */
-        #menu { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 20, 30, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 100; overflow-y: auto; padding: 10px;}
-        h1 { font-size: clamp(40px, 8vw, 90px); margin: 0 0 5px 0; text-shadow: 4px 4px 0 #000; color: #fff; }
-        .subtitle { font-size: clamp(14px, 3vw, 22px); color: #87CEEB; margin-bottom: 20px; text-shadow: 1px 1px 0 #000; text-align: center;}
-        .btn { background: #555; border: 4px solid #000; border-top-color: #888; border-left-color: #888; color: white; font-family: inherit; font-size: clamp(18px, 4vw, 28px); padding: 8px 16px; margin: 5px; cursor: pointer; width: 100%; max-width: 320px; }
-        .btn:active { background: #444; }
-        input { font-family: inherit; font-size: clamp(16px, 4vw, 24px); padding: 8px; margin: 5px 0; width: 100%; max-width: 320px; background: #222; color: #0f0; border: 4px solid #555; text-align: center; }
-        #status { margin-top: 10px; font-size: 18px; color: #ffaa00; text-align: center;}
-        .menu-row { display: flex; gap: 10px; width: 100%; max-width: 320px; }
+        #menu { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(30,40,60,0.95) 0%, rgba(10,15,25,0.98) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 100; overflow-y: auto; padding: 20px;}
+        h1 { font-size: clamp(50px, 10vw, 100px); margin: 0 0 5px 0; text-shadow: 4px 4px 0 #000; color: #fff; letter-spacing: 2px; }
+        .subtitle { font-size: clamp(16px, 3.5vw, 24px); color: #87CEEB; margin-bottom: 25px; text-shadow: 1px 1px 0 #000; text-align: center;}
+        .btn { background: #666; border: 3px solid #111; border-top-color: #999; border-left-color: #999; color: white; font-family: inherit; font-size: clamp(18px, 4vw, 26px); padding: 10px 20px; margin: 6px; cursor: pointer; width: 100%; max-width: 300px; transition: background 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.5); }
+        .btn:hover { background: #777; }
+        .btn:active { background: #555; transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.5); }
+        input { font-family: inherit; font-size: clamp(16px, 4vw, 22px); padding: 8px; margin: 6px 0; width: 100%; max-width: 300px; background: #1a1a1a; color: #55ff55; border: 3px solid #444; text-align: center; border-radius: 4px; }
+        #status { margin-top: 12px; font-size: 20px; color: #ffaa00; text-align: center;}
+        .menu-row { display: flex; gap: 10px; width: 100%; max-width: 300px; }
 
         /* Игровой UI */
         #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 50; }
-        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255, 255, 255, 0.9); font-size: 26px; text-shadow: 2px 2px 0 #000; }
-        .hud-text { position: absolute; color: white; font-size: 20px; text-shadow: 2px 2px 0 #000; padding: 10px; }
+        #crosshair { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255, 255, 255, 0.9); font-size: 24px; text-shadow: 2px 2px 0 #000; }
+        .hud-text { position: absolute; color: white; font-size: 22px; text-shadow: 2px 2px 0 #000; padding: 10px; }
         #players-info { top: 10px; left: 10px; }
-        #server-id-display { top: 10px; right: 10px; color: #0f0; background: rgba(0,0,0,0.5); border-radius: 5px; pointer-events: auto; display: none; }
+        #server-id-display { top: 10px; right: 10px; color: #55ff55; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 4px; pointer-events: auto; display: none; border: 1px solid #333; }
         
-        #stats-container { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: clamp(280px, 50vw, 380px); display: flex; justify-content: space-between; padding: 0 5px; }
-        #hearts-container, #hunger-container { display: flex; gap: 2px; }
-        .stat-icon { font-size: 22px; text-shadow: 2px 2px 0 #000; }
+        #stats-container { position: absolute; bottom: 75px; left: 50%; transform: translateX(-50%); width: 280px; display: flex; justify-content: space-between; padding: 0 5px; }
+        #hearts-container, #hunger-container { display: flex; gap: 1px; }
+        .stat-icon { font-size: 20px; text-shadow: 1px 1px 0 #000; }
 
-        #break-progress-container { position: absolute; top: 55%; left: 50%; transform: translateX(-50%); width: 60px; height: 12px; background: rgba(0,0,0,0.7); border: 2px solid #222; display: none; border-radius: 4px; overflow: hidden; }
-        #break-progress-bar { width: 0%; height: 100%; background: #00ff00; }
+        #break-progress-container { position: absolute; top: 56%; left: 50%; transform: translateX(-50%); width: 50px; height: 10px; background: rgba(0,0,0,0.8); border: 2px solid #333; display: none; border-radius: 3px; overflow: hidden; }
+        #break-progress-bar { width: 0%; height: 100%; background: #55ff55; }
 
         /* Хотбар */
-        #hotbar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0, 0, 0, 0.6); padding: 5px; pointer-events: auto; border-radius: 8px; }
-        .slot { width: clamp(35px, 7vw, 50px); height: clamp(35px, 7vw, 50px); background: #8b8b8b; border: 3px solid #373737; border-top-color: #fff; border-left-color: #fff; position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-        .slot.active { border-color: #ffff00; }
-        .item-icon { width: 70%; height: 70%; background-size: cover; pointer-events: none; }
-        .item-count { position: absolute; bottom: 0px; right: 3px; color: white; font-size: 18px; text-shadow: 2px 2px 0 #000; pointer-events: none; z-index: 2;}
+        #hotbar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0, 0, 0, 0.7); padding: 6px; pointer-events: auto; border-radius: 6px; border: 2px solid rgba(255,255,255,0.15); }
+        .slot { width: 44px; height: 44px; background: #8b8b8b; border: 2px solid #373737; border-top-color: #fff; border-left-color: #fff; position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center; border-radius: 3px; }
+        .slot.active { border-color: #ffff33; box-shadow: inset 0 0 0 2px #ffff33; }
+        .item-icon { width: 75%; height: 75%; background-size: contain; background-repeat: no-repeat; background-position: center; pointer-events: none; }
+        .item-count { position: absolute; bottom: 1px; right: 3px; color: white; font-size: 16px; text-shadow: 2px 2px 0 #000; pointer-events: none; z-index: 2;}
 
         /* Чат */
-        #chat-container { position: absolute; bottom: 100px; left: 10px; width: 300px; max-height: 200px; display: none; flex-direction: column; z-index: 55; pointer-events: none; }
+        #chat-container { position: absolute; bottom: 90px; left: 10px; width: 280px; max-height: 180px; display: none; flex-direction: column; z-index: 55; pointer-events: none; }
         #chat-messages { flex-grow: 1; overflow-y: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; text-shadow: 1px 1px 0 #000; font-size: 18px; color: white; }
-        #chat-input { pointer-events: auto; display: none; margin-top: 5px; width: 100%; font-size: 18px; background: rgba(0,0,0,0.6); color: white; border: 1px solid #777; padding: 4px; font-family: inherit; }
+        #chat-input { pointer-events: auto; display: none; margin-top: 5px; width: 100%; font-size: 18px; background: rgba(0,0,0,0.7); color: white; border: 1px solid #777; padding: 4px; font-family: inherit; border-radius: 3px; }
         
-        /* Инвентарь UI */
-        #inventory-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 150; display: none; align-items: center; justify-content: center; pointer-events: auto; }
-        .inv-window { background: #c6c6c6; border: 3px solid #555; border-top-color: #fff; border-left-color: #fff; padding: 10px; width: 95%; max-width: 420px; display: flex; flex-direction: column; align-items: center; position: relative; }
-        .close-btn { position: absolute; top: 4px; right: 4px; background: #ff4444; color: white; border: 2px solid #aa0000; font-family: inherit; font-size: 18px; padding: 0 8px; cursor: pointer; font-weight: bold; }
-        #inv-mode-btn { background: #444; color: #0f0; border: 2px solid #222; font-family: inherit; font-size: 16px; padding: 4px 8px; margin-bottom: 6px; cursor: pointer; border-radius: 4px; width: 100%; }
+        /* Инвентарь UI (Компактный и стильный) */
+        #inventory-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 150; display: none; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(2px); }
+        .inv-window { background: #c6c6c6; border: 3px solid #333; border-top-color: #fff; border-left-color: #fff; padding: 12px; width: 340px; display: flex; flex-direction: column; align-items: center; position: relative; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .close-btn { position: absolute; top: 4px; right: 4px; background: #c63636; color: white; border: 2px solid #500; font-family: inherit; font-size: 16px; width: 24px; height: 24px; cursor: pointer; font-weight: bold; border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+        .close-btn:hover { background: #e04444; }
+        #inv-mode-btn { background: #555; color: #55ff55; border: 2px solid #222; font-family: inherit; font-size: 14px; padding: 3px 6px; margin-bottom: 8px; cursor: pointer; border-radius: 3px; width: 100%; text-align: center; }
         .inv-row { display: flex; gap: 3px; margin-bottom: 3px; justify-content: center; }
-        .crafting-area { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px; background: #a0a0a0; padding: 6px; border-radius: 4px; }
-        .craft-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; }
-        .arrow { font-size: 24px; font-weight: bold; color: #333; }
-        #cursor-item { position: absolute; pointer-events: none; z-index: 200; display: none; width: 40px; height: 40px; }
+        .crafting-area { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 8px; background: #b0b0b0; padding: 6px; border-radius: 4px; border: 2px inset #888; width: 100%; }
+        .craft-grid { display: grid; gap: 3px; }
+        .arrow { font-size: 22px; font-weight: bold; color: #444; }
+        #cursor-item { position: absolute; pointer-events: none; z-index: 200; display: none; width: 38px; height: 38px; }
         
-        #death-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(200, 0, 0, 0.8); z-index: 250; display: none; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; }
-        #death-screen h1 { color: white; text-shadow: 4px 4px 0 #000; margin-bottom: 30px; font-size: 50px; }
+        #death-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(180, 0, 0, 0.85); z-index: 250; display: none; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; }
+        #death-screen h1 { color: white; text-shadow: 4px 4px 0 #000; margin-bottom: 25px; font-size: 48px; }
 
         /* Мобильное управление */
         #mobile-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 60; }
         .touch-zone { position: absolute; top: 0; height: 100%; width: 50%; pointer-events: auto; }
         #touch-left { left: 0; } #touch-right { right: 0; }
-        #joystick-base { position: absolute; bottom: 30px; left: 30px; width: 120px; height: 120px; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 50%; display: none; justify-content: center; align-items: center; pointer-events: none; }
-        #joystick-knob { width: 55px; height: 55px; background: rgba(255, 255, 255, 0.7); border-radius: 50%; position: absolute; }
+        #joystick-base { position: absolute; bottom: 25px; left: 25px; width: 110px; height: 110px; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 50%; display: none; justify-content: center; align-items: center; pointer-events: none; }
+        #joystick-knob { width: 50px; height: 50px; background: rgba(255, 255, 255, 0.8); border-radius: 50%; position: absolute; }
         
-        .btn-mobile { position: absolute; background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(255, 255, 255, 0.6); color: white; display: flex; justify-content: center; align-items: center; pointer-events: auto; backdrop-filter: blur(4px); text-shadow: 2px 2px 0 #000; border-radius: 50%; }
+        .btn-mobile { position: absolute; background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(255, 255, 255, 0.6); color: white; display: flex; justify-content: center; align-items: center; pointer-events: auto; backdrop-filter: blur(2px); text-shadow: 2px 2px 0 #000; border-radius: 50%; }
         .btn-mobile:active { background: rgba(255, 255, 255, 0.4); }
-        #btn-sprint { bottom: 30px; right: 120px; width: 60px; height: 60px; font-size: 24px; }
-        #btn-jump { bottom: 30px; right: 30px; width: 75px; height: 75px; font-size: 30px; }
-        #btn-mine { bottom: 120px; right: 95px; width: 60px; height: 60px; font-size: 24px; } 
-        #btn-place { bottom: 120px; right: 25px; width: 60px; height: 60px; font-size: 24px; } 
-        #btn-inv-mobile { top: 15px; right: 15px; width: 45px; height: 45px; border-radius: 8px; font-size: 22px; }
+        #btn-sprint { bottom: 25px; right: 115px; width: 55px; height: 55px; font-size: 22px; }
+        #btn-jump { bottom: 25px; right: 25px; width: 70px; height: 70px; font-size: 28px; }
+        #btn-mine { bottom: 105px; right: 90px; width: 55px; height: 55px; font-size: 22px; } 
+        #btn-place { bottom: 105px; right: 25px; width: 55px; height: 55px; font-size: 22px; } 
+        #btn-inv-mobile { top: 12px; right: 12px; width: 42px; height: 42px; border-radius: 6px; font-size: 20px; }
 
-        /* Иконки */
-        .icon-0 { background: transparent; } .icon-1 { background: linear-gradient(#559c3f 20%, #7a5c3d 20%); } 
-        .icon-2 { background: #7a5c3d; } .icon-3 { background: #888888; } 
-        .icon-4 { background: #5c4033; border-radius: 6px; } .icon-5 { background: #3a7a3a; border: 2px dashed #2a5a2a; } 
-        .icon-6 { background: #cda26f; border: 2px solid #8b6b43; } .icon-7 { background: #3498db; opacity: 0.8; border-radius: 50%; } 
-        .icon-8 { background: #888888; position: relative; } .icon-8::after { content: ''; position: absolute; top: 20%; left: 20%; width: 25%; height: 25%; background: #ffccaa; box-shadow: 8px 8px 0 #ffccaa; }
-        .icon-9 { background: #ffffff; opacity: 0.8; } .icon-10 { background: #666; border: 1px dashed #555; } 
-        .icon-11 { background: #8b5a2b; border: 2px solid #5c3a21; position: relative; } .icon-11::after{ content: ''; position: absolute; top:10%; left:10%; width:80%; height:80%; border: 1px dashed #3a2211; }
-        .icon-12 { background: #5c4033; border: 2px dashed #8b6b43; border-radius: 2px; width: 60%!important; }
-        .icon-15 { background: #888888; position: relative; } .icon-15::after { content:''; position: absolute; top:20%; left:20%; width:15%; height:15%; background: #dcb38a; box-shadow: 10px 10px 0 #dcb38a, 15px 5px 0 #e6c8b0; }
+        /* ИКОНКИ БЛОКОВ И КРАСИВЫЕ МОДЕЛИ ИНСТРУМЕНТОВ */
+        .icon-0 { background: transparent; } 
+        .icon-1 { background: linear-gradient(#559c3f 25%, #7a5c3d 25%); border-radius: 2px; } 
+        .icon-2 { background: #7a5c3d; border-radius: 2px; } 
+        .icon-3 { background: #888888; border-radius: 2px; box-shadow: inset 1px 1px 0 #aaa, inset -1px -1px 0 #555; } 
+        .icon-4 { background: #5c4033; border-radius: 4px; box-shadow: inset 1px 1px 0 #8b5a2b; } 
+        .icon-5 { background: #3a7a3a; border: 2px dashed #2a5a2a; border-radius: 3px; } 
+        .icon-6 { background: #cda26f; border: 1px solid #8b6b43; border-radius: 2px; } 
+        .icon-7 { background: #3498db; opacity: 0.85; border-radius: 50%; } 
+        .icon-8 { background: #777; border-radius: 2px; box-shadow: inset 1px 1px 0 #999, inset -1px -1px 0 #444; } 
+        .icon-9 { background: #ffffff; opacity: 0.85; } 
+        .icon-10 { background: #555; border: 1px dashed #777; } 
+        .icon-11 { background: #8b5a2b; border: 2px solid #5c3a21; border-radius: 2px; position: relative; } 
+        .icon-11::after{ content: ''; position: absolute; top:15%; left:15%; width:70%; height:70%; border: 1px dashed #3a2211; }
+        .icon-12 { background: #5c4033; border: 1px solid #3a2211; border-radius: 2px; width: 55%!important; }
+        .icon-15 { background: #888; border-radius: 2px; position: relative; } 
+        .icon-15::after { content:''; position: absolute; top:20%; left:20%; width:15%; height:15%; background: #dcb38a; box-shadow: 8px 8px 0 #dcb38a; }
         
-        .icon-100 { background: #8b6b43; width: 6px!important; height: 80%!important; transform: rotate(45deg); margin: auto; } 
-        .icon-110 { background: #fff; width: 60%!important; height: 30%!important; border-radius: 4px; border: 1px solid #aaa; margin: auto; }
+        .icon-100 { background: #8b6b43; width: 5px!important; height: 75%!important; transform: rotate(45deg); margin: auto; border-radius: 2px; } 
+        .icon-110 { background: #ddd; width: 65%!important; height: 35%!important; border-radius: 3px; border: 1px solid #aaa; margin: auto; box-shadow: inset 1px 1px 0 #fff; }
         
+        /* КРАСИВЫЕ КИРКИ */
         .pickaxe { background: transparent; position: relative; width: 100%!important; height: 100%!important; }
-        .pickaxe::before { content: ''; position: absolute; width: 5px; height: 70%; background: #8b6b43; transform: rotate(45deg); left: 45%; top: 20%; }
-        .pickaxe::after { content: ''; position: absolute; width: 80%; height: 10px; transform: rotate(45deg); top: 15%; left: 0%; border-radius: 3px; }
-        .icon-101::after { background: #cda26f; border: 2px solid #8b6b43; } .icon-104::after { background: #666; border: 2px solid #444; } .icon-105::after { background: #fff; border: 2px solid #ccc; } 
+        .pickaxe::before { content: ''; position: absolute; width: 4px; height: 65%; background: #8b6b43; transform: rotate(45deg); left: 46%; top: 22%; border-radius: 1px; }
+        .pickaxe::after { content: ''; position: absolute; width: 75%; height: 12px; transform: rotate(45deg); top: 12%; left: 4%; border-radius: 4px; }
+        .icon-101::after { background: #cda26f; border: 2px solid #6b4b23; } 
+        .icon-104::after { background: #888; border: 2px solid #444; } 
+        .icon-105::after { background: #f0f0f0; border: 2px solid #888; box-shadow: inset 1px 1px 0 #fff; } 
         
+        /* КРАСИВЫЕ МЕЧИ */
         .sword { background: transparent; position: relative; width: 100%!important; height: 100%!important; }
-        .sword::before { content: ''; position: absolute; width: 5px; height: 30%; background: #8b6b43; transform: rotate(45deg); left: 20%; top: 60%; }
-        .sword::after { content: ''; position: absolute; width: 6px; height: 75%; transform: rotate(45deg); top: 5%; left: 45%; border-radius: 2px; }
-        .icon-106::after { background: #cda26f; border: 1px solid #8b6b43; } .icon-107::after { background: #666; border: 1px solid #444; } .icon-108::after { background: #fff; border: 1px solid #ccc; } 
+        .sword::before { content: ''; position: absolute; width: 4px; height: 25%; background: #5c3a21; transform: rotate(45deg); left: 28%; top: 62%; border-radius: 1px; }
+        .sword::after { content: ''; position: absolute; width: 5px; height: 70%; transform: rotate(45deg); top: 10%; left: 48%; border-radius: 2px; }
+        .icon-106::after { background: #cda26f; border: 1px solid #6b4b23; } 
+        .icon-107::after { background: #888; border: 1px solid #444; } 
+        .icon-108::after { background: #f0f0f0; border: 1px solid #888; box-shadow: inset 1px 1px 0 #fff; } 
         
-        .icon-102 { background: #ffaaaa; border-radius: 50%; width: 80%!important; height: 80%!important; margin: 10%; } 
+        .icon-102 { background: #ffaaaa; border-radius: 50%; width: 75%!important; height: 75%!important; margin: 12%; box-shadow: inset 2px 2px 0 #fff; } 
         .icon-103 { background: #eeeeee; border-radius: 20%; border: 2px dashed #ccc; } 
-        .icon-109 { background: #ff3333; border-radius: 50%; width: 60%!important; height: 60%!important; margin: 20%; position:relative; } .icon-109::after { content:''; position:absolute; top:-2px; left:40%; width:2px; height:5px; background:#00ff00; }
+        .icon-109 { background: #ff3333; border-radius: 50%; width: 60%!important; height: 60%!important; margin: 20%; position:relative; box-shadow: inset 2px 2px 0 #ff8888; } 
+        .icon-109::after { content:''; position:absolute; top:-3px; left:40%; width:2px; height:6px; background:#55ff55; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
@@ -117,17 +133,17 @@
 
     <div id="menu">
         <h1>WebCraft</h1>
-        <p class="subtitle">V3 Survival: Верстаки, Голод, Спринт и Инструменты!</p>
+        <p class="subtitle">V4 Ultimate Polish: Удобный интерфейс, Верстаки и Выживание</p>
         <input type="text" id="player-name-input" placeholder="Твой никнейм" value="Steve">
         <button class="btn" id="btn-single">Одиночная игра</button>
         <button class="btn" id="btn-host">Создать LAN Сервер</button>
-        <div style="width: 100%; max-width: 320px; border-top: 2px dashed #555; padding-top: 8px; margin-top: 8px; text-align: center;">
+        <div style="width: 100%; max-width: 300px; border-top: 2px dashed #555; padding-top: 8px; margin-top: 8px; text-align: center;">
             <input type="text" id="join-id" placeholder="ID сервера">
             <button class="btn" id="btn-join" style="width: 100%; margin: 0;">Подключиться</button>
         </div>
         <div class="menu-row" style="margin-top: 8px;">
-            <button class="btn" style="font-size:20px; background:#2e8b57;" onclick="saveWorld()">Сохранить</button>
-            <button class="btn" style="font-size:20px; background:#b8860b;" onclick="loadWorld()">Загрузить</button>
+            <button class="btn" style="font-size:18px; background:#2e8b57;" onclick="saveWorld()">Сохранить</button>
+            <button class="btn" style="font-size:18px; background:#b8860b;" onclick="loadWorld()">Загрузить</button>
         </div>
         <div id="status"></div>
     </div>
@@ -142,17 +158,15 @@
     <div id="inventory-ui">
         <div class="inv-window">
             <button class="close-btn" onclick="toggleInventory()">X</button>
-            <h3 style="margin:0 0 6px 0; color:#333;" id="inv-title">Инвентарь & Крафт</h3>
-            <button id="inv-mode-btn" onclick="toggleInvMode()">Режим: ПЕРЕМЕСТИТЬ ВСЁ</button>
+            <h3 style="margin:0 0 6px 0; color:#333; font-size:22px;" id="inv-title">Инвентарь</h3>
+            <button id="inv-mode-btn" onclick="toggleInvMode()">Режим: ВСЁ</button>
             <div class="crafting-area">
-                <div class="craft-grid" id="craft-grid-ui">
-                    <!-- Будет сгенерировано JS -->
-                </div>
+                <div class="craft-grid" id="craft-grid-ui"></div>
                 <div class="arrow">➔</div>
-                <div class="slot inv-slot" data-type="craftOut" data-idx="0" style="width:55px; height:55px; border-color:#222; background:#777;"></div>
+                <div class="slot inv-slot" data-type="craftOut" data-idx="0" style="width:44px; height:44px; border-color:#222; background:#888;"></div>
             </div>
             <div id="inv-main"></div>
-            <div style="height: 6px;"></div>
+            <div style="height: 4px;"></div>
             <div id="inv-hotbar" class="inv-row"></div>
         </div>
     </div>
@@ -188,13 +202,10 @@
     </div>
 
     <script>
-        // ==========================================
-        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-        // ==========================================
         let camera, scene, renderer, dirLight, ambientLight;
         const dummy = new THREE.Object3D();
         const outlineGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(1.01, 1.01, 1.01));
-        const outlineMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2, transparent: true, opacity: 0.5 });
+        const outlineMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2, transparent: true, opacity: 0.6 });
         let blockOutline;
         
         const MAX_BLOCKS = 120000;
@@ -208,39 +219,29 @@
         let gameStarted = false, isPointerLocked = false;
         let myName = "Player";
         
-        // Инвентарь и крафт (Теперь 3x3 общий массив, но UI зависит от режима)
         const INV_SIZE = 27, HOTBAR_SIZE = 9, CRAFT_SIZE = 9;
         let inventory = new Array(INV_SIZE).fill(null), hotbar = new Array(HOTBAR_SIZE).fill(null), craftGrid = new Array(CRAFT_SIZE).fill(null), craftResult = null;
-        let activeHotbarSlot = 0, cursorItem = null, isInvOpen = false, invMode = 'all', currentCraftMode = 'inv'; // 'inv' (2x2) или 'workbench' (3x3)
+        let activeHotbarSlot = 0, cursorItem = null, isInvOpen = false, invMode = 'all', currentCraftMode = 'inv';
 
-        // Начальные предметы
         hotbar[0] = { id: 101, count: 1 }; hotbar[1] = { id: 106, count: 1 }; hotbar[2] = { id: 4, count: 64 }; hotbar[3] = { id: 109, count: 10 };
 
-        // Умная система рецептов (Строки с разделителем '|')
         const RECIPES = [
-            { in: "4,|", out: {id: 6, count: 4} }, // Доски из дерева
-            { in: "6,|,6,|", out: {id: 100, count: 4} }, // Палки из досок
-            { in: "6,6,|,6,6,|", out: {id: 11, count: 1} }, // Верстак
-            
-            // Кирки
-            { in: "6,6,6,|,0,100,0,|,0,100,0,|", out: {id: 101, count: 1} }, // Деревянная кирка
-            { in: "8,8,8,|,0,100,0,|,0,100,0,|", out: {id: 104, count: 1} }, // Каменная кирка
-            { in: "110,110,110,|,0,100,0,|,0,100,0,|", out: {id: 105, count: 1} }, // Железная кирка
-            
-            // Мечи
-            { in: "6,|,6,|,100,|", out: {id: 106, count: 1} }, // Деревянный
-            { in: "8,|,8,|,100,|", out: {id: 107, count: 1} }, // Каменный
-            { in: "110,|,110,|,100,|", out: {id: 108, count: 1} }, // Железный
-            
-            // Прочее
-            { in: "6,6,|,6,6,|,6,6,|", out: {id: 12, count: 3} } // Двери
+            { in: "4,|", out: {id: 6, count: 4} },
+            { in: "6,|,6,|", out: {id: 100, count: 4} },
+            { in: "6,6,|,6,6,|", out: {id: 11, count: 1} },
+            { in: "6,6,6,|,0,100,0,|,0,100,0,|", out: {id: 101, count: 1} },
+            { in: "8,8,8,|,0,100,0,|,0,100,0,|", out: {id: 104, count: 1} },
+            { in: "110,110,110,|,0,100,0,|,0,100,0,|", out: {id: 105, count: 1} },
+            { in: "6,|,6,|,100,|", out: {id: 106, count: 1} },
+            { in: "8,|,8,|,100,|", out: {id: 107, count: 1} },
+            { in: "110,|,110,|,100,|", out: {id: 108, count: 1} },
+            { in: "6,6,|,6,6,|,6,6,|", out: {id: 12, count: 3} }
         ];
 
-        // Физика, Время и Голод
         let health = 10, hunger = 10, hungerExhaustion = 0, isDead = false;
         let fallVelocityTracker = 0, inWater = false, isSprinting = false, regenTimer = 0, starvationTimer = 0;
         let moveState = { forward: 0, right: 0 }, canJump = false, velocity = new THREE.Vector3();
-        let prevTime = performance.now(), dayTime = Math.PI / 2; // Утро
+        let prevTime = performance.now(), dayTime = Math.PI / 2;
         const euler = new THREE.Euler(0, 0, 0, 'YXZ');
         let drops = [], mobs = [], particles = [];
         let miningBlock = null, mineProgress = 0, isMining = false;
@@ -282,9 +283,6 @@
 
         let peer, connections = [], otherPlayers = new Map(), isHost = false;
 
-        // ==========================================
-        // ИНИЦИАЛИЗАЦИЯ
-        // ==========================================
         function initEngine() {
             if (gameStarted) return; gameStarted = true; initAudio();
             myName = document.getElementById('player-name-input').value || "Player";
@@ -295,12 +293,10 @@
             scene.fog = new THREE.Fog(0x87CEEB, 20, (VIEW_DISTANCE * CHUNK_SIZE) + 10);
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             
-            // Рука
             handGroup = new THREE.Group(); camera.add(handGroup); scene.add(camera);
             handMesh = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.6), new THREE.MeshStandardMaterial({color: 0xcd853f, roughness: 0.8}));
             handMesh.position.set(0.3, -0.2, -0.4); handGroup.add(handMesh);
             
-            // Обводка блока
             blockOutline = new THREE.LineSegments(outlineGeo, outlineMat);
             blockOutline.visible = false;
             scene.add(blockOutline);
@@ -330,7 +326,7 @@
 
         function getMaterial(hex, isGrass=false, isWater=false, isWorkbench=false) {
             if (isWater) return new THREE.MeshStandardMaterial({color: hex, transparent: true, opacity: 0.5, depthWrite: false});
-            if (isWorkbench) return [ // Стороны верстака
+            if (isWorkbench) return [
                 new THREE.MeshStandardMaterial({color: 0x5c3a21}), new THREE.MeshStandardMaterial({color: 0x5c3a21}),
                 new THREE.MeshStandardMaterial({color: 0x8b5a2b}), new THREE.MeshStandardMaterial({color: 0x5c3a21}),
                 new THREE.MeshStandardMaterial({color: 0x5c3a21}), new THREE.MeshStandardMaterial({color: 0x5c3a21})
@@ -350,8 +346,7 @@
                 4: getMaterial(0x5c4033), 5: getMaterial(0x3a7a3a), 6: getMaterial(0xcda26f), 
                 7: getMaterial(0x3498db, false, true), 8: getMaterial(0x777777), 9: getMaterial(0xffffff), 
                 10: getMaterial(0x666666), 11: getMaterial(0x0, false, false, true), 
-                12: getMaterial(0x5c4033), // Дверь
-                15: getMaterial(0x999999) // Железная руда
+                12: getMaterial(0x5c4033), 15: getMaterial(0x999999) 
             };
             for(let i in mats) {
                 let type = parseInt(i);
@@ -388,17 +383,13 @@
             
             if (triggerNet) { worldMods[key] = { action: 'break' }; sendNetData({ type: 'block', action: 'break', x, y, z }); }
             
-            // Логика дропов
-            if (type === 3) return 8; // Камень -> Булыжник
-            if (type === 15) return 110; // Железная руда -> Железный слиток (Аркадно)
-            if (type === 5) return Math.random() < 0.1 ? 109 : 0; // Листва -> Яблоко
+            if (type === 3) return 8; 
+            if (type === 15) return 110; 
+            if (type === 5) return Math.random() < 0.1 ? 109 : 0; 
             
             return type;
         }
 
-        // ==========================================
-        // ГЕНЕРАЦИЯ
-        // ==========================================
         function spawnParticles(x, y, z, colorHex) {
             if(!colorHex) return;
             let mat = new THREE.MeshBasicMaterial({color: colorHex});
@@ -434,7 +425,6 @@
                         if (y === h && y >= WATER_LEVEL) type = 1; else if (y < h && y > h - 3) type = 2; 
                         else if (y > h && y <= WATER_LEVEL) type = 7; else if (y < h - 3 && Math.random() < 0.03) type = 8; 
                         
-                        // Железная руда под землей
                         if (type === 3 && y < h - 5 && Math.random() < 0.03) type = 15;
                         
                         addBlock(wx, y, wz, type);
@@ -463,9 +453,6 @@
             }
         }
 
-        // ==========================================
-        // ДРОПЫ, МОБЫ И ЧАТ
-        // ==========================================
         function spawnDrop(x, y, z, id, count=1) {
             if (!id || id===7 || id===9) return; 
             let color = 0xffffff;
@@ -508,14 +495,11 @@
             if(chatBox.children.length > 8) chatBox.removeChild(chatBox.firstChild);
         }
 
-        // ==========================================
-        // ИНВЕНТАРЬ И UI
-        // ==========================================
         function toggleInvMode() {
             let btn = document.getElementById('inv-mode-btn');
             if (invMode === 'all') { invMode = 'half'; btn.innerText = 'Режим: ПОЛОВИНА'; btn.style.color = '#ffaa00'; }
-            else if (invMode === 'half') { invMode = 'one'; btn.innerText = 'Режим: ПО ОДНОМУ'; btn.style.color = '#ff4444'; }
-            else { invMode = 'all'; btn.innerText = 'Режим: ПЕРЕМЕСТИТЬ ВСЁ'; btn.style.color = '#0f0'; }
+            else if (invMode === 'half') { invMode = 'one'; btn.innerText = 'Режим: ПО ОДНОМУ'; btn.style.color = '#ff5555'; }
+            else { invMode = 'all'; btn.innerText = 'Режим: ВСЁ'; btn.style.color = '#55ff55'; }
         }
 
         function buildInventoryHTML() {
@@ -543,7 +527,7 @@
         function setCraftMode(mode) {
             currentCraftMode = mode;
             let cGrid = document.getElementById('craft-grid-ui');
-            document.getElementById('inv-title').innerText = mode === 'inv' ? "Инвентарь & Крафт" : "Верстак";
+            document.getElementById('inv-title').innerText = mode === 'inv' ? "Инвентарь" : "Верстак";
             
             if(mode === 'inv') {
                 cGrid.style.gridTemplateColumns = '1fr 1fr';
@@ -561,7 +545,9 @@
         function renderInventory() {
             const drawSlot = (el, item) => {
                 if(item) {
-                    let cCls = (item.id>100 && item.id<111 && item.id!==102 && item.id!==103 && item.id!==109) ? 'icon-'+item.id : `icon-${item.id}`;
+                    let isTool = (item.id >= 101 && item.id <= 108);
+                    let cCls = isTool ? `icon-${item.id} pickaxe` : ((item.id >= 100 && item.id < 111 && item.id !== 102 && item.id !== 103 && item.id !== 109) ? 'icon-'+item.id : `icon-${item.id}`);
+                    if(item.id >= 106 && item.id <= 108) cCls = `icon-${item.id} sword`;
                     el.innerHTML = `<div class="item-icon ${cCls}"></div><div class="item-count">${item.count>1?item.count:''}</div>`;
                 } else el.innerHTML = '';
             };
@@ -574,7 +560,10 @@
 
             let cursorEl = document.getElementById('cursor-item');
             if(cursorItem) {
-                cursorEl.style.display = 'block'; document.getElementById('cursor-icon').className = `item-icon icon-${cursorItem.id}`;
+                cursorEl.style.display = 'block'; 
+                let isTool = (cursorItem.id >= 101 && cursorItem.id <= 108);
+                let cCls = isTool ? `icon-${cursorItem.id} ${cursorItem.id>=106?'sword':'pickaxe'}` : `icon-${cursorItem.id}`;
+                document.getElementById('cursor-icon').className = `item-icon ${cCls}`;
                 document.getElementById('cursor-count').innerText = cursorItem.count > 1 ? cursorItem.count : '';
             } else cursorEl.style.display = 'none';
         }
@@ -601,7 +590,7 @@
             craftResult = null;
             let p = getCraftString(craftGrid, 3);
             if(p.str === "") return;
-            if(currentCraftMode === 'inv' && (p.w > 2 || p.h > 2)) return; // Слишком большое для 2x2
+            if(currentCraftMode === 'inv' && (p.w > 2 || p.h > 2)) return;
             
             for (let r of RECIPES) {
                 if (r.in === p.str) { craftResult = { id: r.out.id, count: r.out.count }; break; }
@@ -657,9 +646,6 @@
             for(let i=0; i<INV_SIZE; i++) { if(!inventory[i]) { inventory[i] = {id, count}; renderInventory(); return; } }
         }
 
-        // ==========================================
-        // ЛОГИКА ИГРЫ
-        // ==========================================
         function saveWorld() {
             localStorage.setItem('webcraft_world', JSON.stringify(worldMods));
             localStorage.setItem('webcraft_inv', JSON.stringify({hotbar, inventory}));
@@ -735,13 +721,11 @@
             let activeItem = hotbar[activeHotbarSlot];
 
             if(isRightClick) {
-                // Взаимодействие с Верстаком (ПКМ по нему)
                 if (hit && hit.type === 'block' && hit.blockType === 11) {
                     openInventory('workbench');
                     return;
                 }
                 
-                // Еда
                 if (activeItem && (activeItem.id === 102 || activeItem.id === 109)) { 
                     if (hunger < 10 || health < 10) { 
                         hunger = Math.min(10, hunger + (activeItem.id===109 ? 2 : 4)); 
@@ -752,13 +736,12 @@
                     }
                 }
 
-                // Установка блоков
                 if(hit && hit.type === 'block' && hit.lastPos && activeItem && activeItem.id < 100) { 
                     addBlock(hit.lastPos.x, hit.lastPos.by, hit.lastPos.bz, activeItem.id, true);
                     activeItem.count--; if(activeItem.count <= 0) hotbar[activeHotbarSlot] = null;
                     renderInventory(); playSound('step');
                 }
-            } else { // ЛКМ
+            } else {
                 if(!hit) return;
                 let toolId = activeItem ? activeItem.id : 0;
                 let dmg = getWeaponDamage(toolId);
@@ -793,7 +776,6 @@
                 isInvOpen = false;
                 document.getElementById('inventory-ui').style.display = 'none';
                 
-                // Возвращаем предметы из сетки крафта
                 if(cursorItem) { giveItem(cursorItem.id, cursorItem.count); cursorItem = null; } 
                 for(let i=0; i<9; i++) { if(craftGrid[i]) { giveItem(craftGrid[i].id, craftGrid[i].count); craftGrid[i] = null; } }
                 craftResult = null;
@@ -807,7 +789,7 @@
         }
 
         function setupControls() {
-            document.addEventListener('mousemove', (e) => { if(isInvOpen && cursorItem) { let c = document.getElementById('cursor-item'); c.style.left = e.clientX - 25 + 'px'; c.style.top = e.clientY - 25 + 'px'; }});
+            document.addEventListener('mousemove', (e) => { if(isInvOpen && cursorItem) { let c = document.getElementById('cursor-item'); c.style.left = e.clientX - 20 + 'px'; c.style.top = e.clientY - 20 + 'px'; }});
             document.addEventListener('contextmenu', e => e.preventDefault());
 
             let chatInput = document.getElementById('chat-input');
@@ -817,7 +799,7 @@
                     if (e.code === 'Enter' || e.code === 'KeyT') {
                         if (!isPointerLocked && document.activeElement === chatInput) {
                             if (chatInput.value.trim() !== '') {
-                                let msg = chatInput.value.trim(); addChatMessage(myName, msg, "#0f0");
+                                let msg = chatInput.value.trim(); addChatMessage(myName, msg, "#55ff55");
                                 if (peer) sendNetData({type: 'chat', text: msg, sender: myName}); chatInput.value = '';
                             }
                             chatInput.style.display = 'none'; document.body.requestPointerLock();
@@ -875,14 +857,14 @@
                 let leftTouchId = null, joyCenter = {x:0, y:0};
                 document.getElementById('touch-left').addEventListener('touchstart', (e) => {
                     e.preventDefault(); leftTouchId = e.changedTouches[0].identifier;
-                    joyBase.style.display = 'flex'; joyBase.style.left = (e.changedTouches[0].clientX - 60) + 'px'; joyBase.style.top = (e.changedTouches[0].clientY - 60) + 'px'; joyCenter = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                    joyBase.style.display = 'flex'; joyBase.style.left = (e.changedTouches[0].clientX - 55) + 'px'; joyBase.style.top = (e.changedTouches[0].clientY - 55) + 'px'; joyCenter = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
                 });
                 document.getElementById('touch-left').addEventListener('touchmove', (e) => {
                     e.preventDefault();
                     for(let i=0; i<e.changedTouches.length; i++) {
                         if(e.changedTouches[i].identifier === leftTouchId) {
                             let dx = e.changedTouches[i].clientX - joyCenter.x, dy = e.changedTouches[i].clientY - joyCenter.y;
-                            let dist = Math.min(50, Math.sqrt(dx*dx + dy*dy)), angle = Math.atan2(dy, dx);
+                            let dist = Math.min(45, Math.sqrt(dx*dx + dy*dy)), angle = Math.atan2(dy, dx);
                             joyKnob.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
                             moveState.right = Math.max(-1, Math.min(1, dx / 40)); moveState.forward = Math.max(-1, Math.min(1, -dy / 40)); 
                         }
@@ -895,15 +877,12 @@
 
         function createNameTag(name) {
             let canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 64;
-            let ctx = canvas.getContext('2d'); ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0,0,256,64);
-            ctx.font = 'bold 36px monospace'; ctx.fillStyle = 'white'; ctx.textAlign = 'center'; ctx.fillText(name, 128, 44);
+            let ctx = canvas.getContext('2d'); ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(0,0,256,64);
+            ctx.font = 'bold 34px monospace'; ctx.fillStyle = 'white'; ctx.textAlign = 'center'; ctx.fillText(name, 128, 44);
             let sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(canvas)}));
             sprite.scale.set(1.5, 0.4, 1); sprite.position.y = 1.3; return sprite;
         }
 
-        // ==========================================
-        // ИГРОВОЙ ЦИКЛ (АНИМАЦИИ)
-        // ==========================================
         let stepTimer = 0;
         function animate() {
             requestAnimationFrame(animate);
@@ -911,7 +890,6 @@
 
             const time = performance.now(); let delta = Math.min((time - prevTime) / 1000, 0.05); 
             
-            // Замедленный ДЕНЬ И НОЧЬ
             dayTime += delta * 0.002; 
             let sunAng = dayTime % (Math.PI*2);
             let intensity = Math.max(0.1, Math.sin(sunAng));
@@ -942,7 +920,6 @@
             }
 
             if ((isPointerLocked || isMobile) && !isDead && !isInvOpen) {
-                // Обводка блока
                 let hit = getRaycastHit();
                 if (hit && hit.type === 'block') {
                     blockOutline.position.set(hit.bx, hit.by, hit.bz);
@@ -969,7 +946,6 @@
                     }
                 } else { miningBlock = null; mineProgress = 0; pBar.style.display = 'none'; }
 
-                // Физика и движение
                 fallVelocityTracker = velocity.y;
                 let drag = inWater ? 4.0 : 12.0, grav = inWater ? 4.0 : 35.0; 
                 velocity.x -= velocity.x * drag * delta; velocity.z -= velocity.z * drag * delta; velocity.y -= grav * delta; 
@@ -979,7 +955,6 @@
 
                 let isMoving = (moveState.forward !== 0 || moveState.right !== 0);
                 
-                // Система голода и бега
                 if (isSprinting && isMoving) {
                     if (hunger > 2) hungerExhaustion += delta * 0.4; else isSprinting = false; 
                 } else if (isMoving) {
@@ -1025,9 +1000,6 @@
 
         window.addEventListener('resize', () => { if(camera) { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }});
 
-        // ==========================================
-        // СЕТЬ
-        // ==========================================
         function updateOtherPlayer(id, x, y, z, ry, name) {
             if (!otherPlayers.has(id)) { 
                 let m = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.8, 0.8), new THREE.MeshStandardMaterial({color: Math.random()*0xffffff})); m.castShadow=true; 
