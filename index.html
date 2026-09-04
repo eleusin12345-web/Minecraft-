@@ -179,6 +179,10 @@
         // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         // ==========================================
         let camera, scene, renderer, dirLight, ambientLight;
+        
+        // ИСПРАВЛЕНИЕ: Добавлен отсутствующий объект dummy, необходимый для генерации инстансов блоков!
+        const dummy = new THREE.Object3D();
+        
         const MAX_BLOCKS = 120000;
         let instancedMeshes = {}, blockData = new Map(), blockIndexToKey = {};
         let chunks = new Map(), chunkQueue = [], chunkBlocks = new Map(), worldMods = {}; // chunkBlocks для выгрузки
@@ -220,7 +224,11 @@
 
         // Звуки (Web Audio API)
         let audioCtx = null;
-        function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') audioCtx.resume(); }
+        function initAudio() { 
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
+            // ИСПРАВЛЕНИЕ: Добавлен catch для безопасного возобновления контекста
+            if(audioCtx.state === 'suspended') audioCtx.resume().catch(e => console.warn("Audio error:", e)); 
+        }
         function playSound(type) {
             if(!audioCtx) return;
             let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
@@ -339,7 +347,11 @@
             mesh.count--; mesh.instanceMatrix.needsUpdate = true; blockData.delete(key);
             
             if (triggerNet) { worldMods[key] = { action: 'break' }; sendNetData({ type: 'block', action: 'break', x, y, z }); }
-            if (type === 3) return 10; if (type === 5 && Math.random() < 0.05) return 109; if (type === 5) return 0;
+            
+            // ИСПРАВЛЕНИЕ: Логика дропа яблок была перезаписана вторым условием
+            if (type === 3) return 10; 
+            if (type === 5) return Math.random() < 0.05 ? 109 : 0; 
+            
             return type;
         }
 
@@ -397,7 +409,7 @@
                     }
                 }
             }
-            // Выгрузка чанков (Очистка памяти) ИСПРАВЛЕНИЕ БАГА 2
+            // Выгрузка чанков (Очистка памяти)
             for (let [cKey, bArr] of chunkBlocks.entries()) {
                 let [cx, cz] = cKey.split(',').map(Number);
                 if (Math.abs(cx - px) > VIEW_DISTANCE + 1 || Math.abs(cz - pz) > VIEW_DISTANCE + 1) {
@@ -566,10 +578,22 @@
             let hContainer = document.getElementById('hearts-container'); hContainer.innerHTML = '';
             for(let i = 0; i < 10; i++) hContainer.innerHTML += `<div class="heart">${i < health ? '❤️' : '🖤'}</div>`;
         }
+        
         function takeDamage(amount) {
-            if(isDead) return; health = Math.max(0, health - amount); updateHeartsUI(); camera.position.y -= 0.3; playSound('hit');
-            if(health === 0) { isDead = true; document.exitPointerLock(); document.getElementById('death-screen').style.display = 'flex'; document.getElementById('ui-layer').style.display = 'none'; }
+            if(isDead) return; 
+            health = Math.max(0, health - amount); 
+            updateHeartsUI(); 
+            camera.position.y -= 0.3; 
+            playSound('hit');
+            // ИСПРАВЛЕНИЕ: Здоровье может опуститься ниже нуля при большом уроне от падения, поэтому <= 0
+            if(health <= 0) { 
+                isDead = true; 
+                document.exitPointerLock(); 
+                document.getElementById('death-screen').style.display = 'flex'; 
+                document.getElementById('ui-layer').style.display = 'none'; 
+            }
         }
+        
         function respawnPlayer() {
             isDead = false; health = 10; camera.position.set(8, 25, 8); velocity.set(0,0,0);
             updateHeartsUI(); document.getElementById('death-screen').style.display = 'none'; document.getElementById('ui-layer').style.display = 'block';
@@ -593,7 +617,6 @@
                 pos.addScaledVector(dir, step); dist += step;
                 let bx = Math.round(pos.x), by = Math.round(pos.y), bz = Math.round(pos.z);
                 
-                // ИСПРАВЛЕНИЕ БАГА 4: Хитбокс PvP (Смещение по Y)
                 for(let [otherId, pMesh] of otherPlayers) {
                     let center = pMesh.position.clone().add(new THREE.Vector3(0, 0.9, 0));
                     if (center.distanceTo(pos) < 1.2) return { type: 'player', peerId: otherId };
@@ -772,7 +795,6 @@
                 let skyColor = new THREE.Color(`rgb(${sr},${sg},${sb})`); scene.background = skyColor; scene.fog.color = skyColor;
             }
 
-            // ИСПРАВЛЕНИЕ БАГА 1: Обратный цикл
             for(let i = drops.length - 1; i >= 0; i--) {
                 let d = drops[i]; d.ry += delta * 2; d.mesh.rotation.y = d.ry; d.mesh.position.y += Math.sin(time*0.005) * 0.005; 
                 if(camera.position.distanceTo(d.mesh.position) < 2.5) { giveItem(d.id, d.count); scene.remove(d.mesh); drops.splice(i, 1); }
@@ -838,7 +860,6 @@
                 pos.x += velocity.x * delta; if (getCollisions(pos)) { pos.x -= velocity.x * delta; velocity.x = 0; }
                 pos.z += velocity.z * delta; if (getCollisions(pos)) { pos.z -= velocity.z * delta; velocity.z = 0; }
                 
-                // ИСПРАВЛЕНИЕ БАГА 5: Падение в воду
                 if(inWater) fallVelocityTracker = 0;
 
                 pos.y += velocity.y * delta;
@@ -892,7 +913,24 @@
         function setupConnectionEvents(conn) {
             conn.on('open', () => { document.getElementById('players-info').innerText = `Игроков: ${connections.length + 1}`; if (isHost) conn.send({ type: 'sync_world', changes: worldMods }); });
             conn.on('data', (data) => handleNetData(data, conn));
-            conn.on('close', () => { connections = connections.filter(c => c !== conn); if (otherPlayers.has(conn.peer)) { scene.remove(otherPlayers.get(conn.peer)); otherPlayers.delete(conn.peer); } document.getElementById('players-info').innerText = `Игроков: ${connections.length + 1}`; });
+            conn.on('close', () => { 
+                connections = connections.filter(c => c !== conn); 
+                // ИСПРАВЛЕНИЕ: Очистка памяти при отключении игрока (Memory Leak Fix)
+                if (otherPlayers.has(conn.peer)) { 
+                    let pMesh = otherPlayers.get(conn.peer);
+                    scene.remove(pMesh); 
+                    pMesh.material.dispose();
+                    pMesh.geometry.dispose();
+                    pMesh.children.forEach(c => {
+                        if(c.material) {
+                            if(c.material.map) c.material.map.dispose();
+                            c.material.dispose();
+                        }
+                    });
+                    otherPlayers.delete(conn.peer); 
+                } 
+                document.getElementById('players-info').innerText = `Игроков: ${connections.length + 1}`; 
+            });
         }
 
         const statusDiv = document.getElementById('status');
