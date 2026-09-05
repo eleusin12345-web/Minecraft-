@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WebCraft V4.3 - Biomes & Structures</title>
+    <title>WebCraft V4.3 - Fixed UI & Joystick</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
         
@@ -40,7 +40,7 @@
         #break-progress-container { position: absolute; top: 56%; left: 50%; transform: translateX(-50%); width: 50px; height: 10px; background: rgba(0,0,0,0.8); border: 2px solid #333; display: none; border-radius: 3px; overflow: hidden; }
         #break-progress-bar { width: 0%; height: 100%; background: #55ff55; }
 
-        /* Хотбар (С ВЫСОКИМ Z-INDEX ЧТОБЫ РАБОТАЛО НА ТЕЛЕФОНЕ) */
+        /* Хотбар */
         #hotbar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0, 0, 0, 0.7); padding: 6px; pointer-events: auto; border-radius: 6px; border: 2px solid rgba(255,255,255,0.15); z-index: 1000; }
         .slot { width: 44px; height: 44px; background: #8b8b8b; border: 2px solid #373737; border-top-color: #fff; border-left-color: #fff; position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center; border-radius: 3px; }
         .slot.active { border-color: #ffff33; box-shadow: inset 0 0 0 2px #ffff33; }
@@ -48,9 +48,9 @@
         .item-count { position: absolute; bottom: 1px; right: 3px; color: white; font-size: 16px; text-shadow: 2px 2px 0 #000; pointer-events: none; z-index: 2;}
 
         /* Инвентарь UI */
-        #inventory-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 150; display: none; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(2px); }
+        #inventory-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 1500; display: none; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(2px); }
         .inv-window { background: #c6c6c6; border: 3px solid #333; border-top-color: #fff; border-left-color: #fff; padding: 12px; width: 340px; display: flex; flex-direction: column; align-items: center; position: relative; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .close-btn { position: absolute; top: -15px; right: -15px; background: #c63636; color: white; border: 2px solid #500; font-family: inherit; font-size: 20px; width: 40px; height: 40px; cursor: pointer; font-weight: bold; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0 #222; z-index: 10; }
+        .close-btn { position: absolute; top: -15px; right: -15px; background: #c63636; color: white; border: 2px solid #500; font-family: inherit; font-size: 20px; width: 40px; height: 40px; cursor: pointer; font-weight: bold; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0 #222; z-index: 2000; }
         .close-btn:hover { background: #e04444; }
         .inv-window .slot { width: 34px; height: 34px; } 
         #inv-mode-btn { background: #555; color: #55ff55; border: 2px solid #222; font-family: inherit; font-size: 14px; padding: 3px 6px; margin-bottom: 8px; cursor: pointer; border-radius: 3px; width: 100%; text-align: center; }
@@ -58,7 +58,7 @@
         .crafting-area { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; background: #b0b0b0; padding: 6px; border-radius: 4px; border: 2px inset #888; width: 100%; }
         .craft-grid { display: grid; gap: 2px; }
         .arrow { font-size: 22px; font-weight: bold; color: #444; }
-        #cursor-item { position: absolute; pointer-events: none; z-index: 200; display: none; width: 38px; height: 38px; }
+        #cursor-item { position: absolute; pointer-events: none; z-index: 3000; display: none; width: 38px; height: 38px; }
         
         #death-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(180, 0, 0, 0.85); z-index: 250; display: none; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; }
         #death-screen h1 { color: white; text-shadow: 4px 4px 0 #000; margin-bottom: 25px; font-size: 48px; }
@@ -70,7 +70,6 @@
 
         /* Мобильное управление */
         #mobile-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 60; }
-        /* ОБРЕЗАЕМ ЗОНУ ДЖОЙСТИКА, ЧТОБЫ НЕ ПЕРЕКРЫВАТЬ ХОТБАР! */
         .touch-zone { position: absolute; top: 0; height: calc(100% - 90px); width: 50%; pointer-events: auto; }
         #touch-left { left: 0; } #touch-right { right: 0; }
         #joystick-base { position: absolute; bottom: 105px; left: 25px; width: 110px; height: 110px; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 50%; display: none; justify-content: center; align-items: center; pointer-events: none; }
@@ -84,7 +83,7 @@
         #btn-place { bottom: 185px; right: 25px; width: 55px; height: 55px; font-size: 22px; } 
         #btn-inv-mobile { top: 12px; right: 12px; width: 42px; height: 42px; border-radius: 6px; font-size: 20px; }
 
-        /* ИКОНКИ ДЛЯ ИНВЕНТАРЯ */
+        /* ИКОНКИ */
         .icon-0 { background: transparent; } 
         .icon-1 { background: linear-gradient(#559c3f 25%, #7a5c3d 25%); border-radius: 2px; } 
         .icon-2 { background: #7a5c3d; border-radius: 2px; } 
@@ -160,7 +159,7 @@
 
     <div id="menu">
         <h1>WebCraft</h1>
-        <p class="subtitle">V4.3 Update: Биомы, Структуры и Идеальный Хотбар!</p>
+        <p class="subtitle">V4.3 - Fixed UI & Joystick</p>
         <input type="text" id="player-name-input" placeholder="Твой никнейм" value="Steve">
         <button class="btn" id="btn-single">Одиночная игра</button>
         <button class="btn" id="btn-host">Создать LAN Сервер</button>
@@ -218,7 +217,7 @@
         </div>
     </div>
 
-    <!-- Хотбар вынесен наружу, чтобы точно ловить клики -->
+    <!-- Хотбар вынесен наружу -->
     <div id="hotbar"></div>
 
     <div id="mobile-controls">
@@ -232,7 +231,6 @@
     </div>
 
     <script>
-        // === ГЕНЕРАТОР ПИКСЕЛЬНЫХ ТЕКСТУР ===
         const textureCache = {};
         function createPixelTexture(type) {
             if(textureCache[type]) return textureCache[type];
@@ -259,8 +257,8 @@
             else if(type === 'stone') { drawNoise('#888888', 25); }
             else if(type === 'cobble') { 
                 drawNoise('#777777', 40); 
-                ctx.fillStyle = 'rgba(0,0,0,0.4)'; for(let i=0; i<10; i++) { ctx.fillRect(Math.random()*16, Math.random()*16, 2, 2); }
-                ctx.fillStyle = 'rgba(255,255,255,0.2)'; for(let i=0; i<10; i++) { ctx.fillRect(Math.random()*16, Math.random()*16, 2, 2); }
+                ctx.fillStyle = 'rgba(0,0,0,0.4)'; for(let i=0; i<10; i++) ctx.fillRect(Math.random()*16, Math.random()*16, 2, 2);
+                ctx.fillStyle = 'rgba(255,255,255,0.2)'; for(let i=0; i<10; i++) ctx.fillRect(Math.random()*16, Math.random()*16, 2, 2);
             }
             else if(type === 'planks') { 
                 drawNoise('#cda26f', 20); ctx.fillStyle = '#8b6b43';
@@ -364,19 +362,18 @@
         hotbar[0] = { id: 111, count: 1 }; hotbar[1] = { id: 104, count: 1 }; hotbar[2] = { id: 6, count: 64 }; hotbar[3] = { id: 14, count: 64 };
 
         const RECIPES = [
-            { in: "4,|", out: {id: 6, count: 4} }, // Доски
-            { in: "6,|,6,|", out: {id: 100, count: 4} }, // Палки
-            { in: "6,6,|,6,6,|", out: {id: 11, count: 1} }, // Верстак
-            { in: "8,8,8,|,8,0,8,|,8,8,8,|", out: {id: 13, count: 1} }, // Печь
-            { in: "6,6,6,|,6,0,6,|,6,6,6,|", out: {id: 17, count: 1} }, // Сундук
-            { in: "3,3,|,3,3,|", out: {id: 10, count: 4} }, // Каменные кирпичи
-            { in: "14,14,|,14,14,|", out: {id: 16, count: 4} }, // Песчаник
-            { in: "10,10,|,10,10,|", out: {id: 18, count: 4} }, // Кирпичи
-            { in: "6,6,6,|,100,100,100,|,6,6,6,|", out: {id: 19, count: 1} }, // Книжная полка
-            { in: "5,5,5,|,6,6,6,|", out: {id: 22, count: 1} }, // Кровать
-            { in: "6,6,|,6,6,|,6,6,|", out: {id: 23, count: 3} }, // Двери
-            { in: "14,|,6,|", out: {id: 9, count: 2} }, // Стекло (замена печки)
-            
+            { in: "4,|", out: {id: 6, count: 4} },
+            { in: "6,|,6,|", out: {id: 100, count: 4} },
+            { in: "6,6,|,6,6,|", out: {id: 11, count: 1} },
+            { in: "8,8,8,|,8,0,8,|,8,8,8,|", out: {id: 13, count: 1} },
+            { in: "6,6,6,|,6,0,6,|,6,6,6,|", out: {id: 17, count: 1} },
+            { in: "3,3,|,3,3,|", out: {id: 10, count: 4} },
+            { in: "14,14,|,14,14,|", out: {id: 16, count: 4} },
+            { in: "10,10,|,10,10,|", out: {id: 18, count: 4} },
+            { in: "6,6,6,|,100,100,100,|,6,6,6,|", out: {id: 19, count: 1} },
+            { in: "5,5,5,|,6,6,6,|", out: {id: 22, count: 1} },
+            { in: "6,6,|,6,6,|,6,6,|", out: {id: 23, count: 3} },
+            { in: "14,|,6,|", out: {id: 9, count: 2} },
             { in: "6,6,6,|,0,100,0,|,0,100,0,|", out: {id: 101, count: 1} },
             { in: "8,8,8,|,0,100,0,|,0,100,0,|", out: {id: 104, count: 1} },
             { in: "110,110,110,|,0,100,0,|,0,100,0,|", out: {id: 105, count: 1} },
@@ -562,7 +559,7 @@
             if (type === 3) return 8; 
             if (type === 15) return 110; 
             if (type === 5) return Math.random() < 0.1 ? 109 : 0; 
-            if (type === 9 || type === 23) return 0; // Стекло и дверь (пока) ломаются
+            if (type === 9 || type === 23) return 0;
             
             return type;
         }
@@ -585,58 +582,53 @@
                 if (Math.abs(dx)+Math.abs(dz) < 4) addBlock(x+dx, y+dy, z+dz, 5, false); 
         }
 
-        // ================= СТРУКТУРЫ =================
         function buildPyramid(cx, cy, cz) {
             for(let r=4; r>=0; r--) {
                 let y = cy + (4-r);
                 for(let dx=-r; dx<=r; dx++) {
                     for(let dz=-r; dz<=r; dz++) {
-                        if (dx===0 && dz===0 && r>0) continue; // внутри пусто
+                        if (dx===0 && dz===0 && r>0) continue;
                         addBlock(cx+dx, y, cz+dz, 16, false);
                     }
                 }
             }
-            addBlock(cx, cy, cz, 17, false); // Сундук
+            addBlock(cx, cy, cz, 17, false);
         }
 
         function buildHouse(cx, cy, cz) {
             for(let dx=-2; dx<=2; dx++) {
                 for(let dz=-2; dz<=2; dz++) {
                     for(let dy=0; dy<4; dy++) {
-                        if (dy===0) addBlock(cx+dx, cy+dy, cz+dz, 8, false); // пол
-                        else if (dy===3) addBlock(cx+dx, cy+dy, cz+dz, 6, false); // крыша
+                        if (dy===0) addBlock(cx+dx, cy+dy, cz+dz, 8, false);
+                        else if (dy===3) addBlock(cx+dx, cy+dy, cz+dz, 6, false);
                         else if (Math.abs(dx)===2 || Math.abs(dz)===2) {
-                            if (dy===1 && dx===0 && dz===2) continue; // проем двери
-                            if (dy===2 && dx===0 && dz===-2) addBlock(cx+dx, cy+dy, cz+dz, 9, false); // окно
-                            else addBlock(cx+dx, cy+dy, cz+dz, 4, false); // стены
+                            if (dy===1 && dx===0 && dz===2) continue;
+                            if (dy===2 && dx===0 && dz===-2) addBlock(cx+dx, cy+dy, cz+dz, 9, false);
+                            else addBlock(cx+dx, cy+dy, cz+dz, 4, false);
                         }
                     }
                 }
             }
-            addBlock(cx, cy+1, cz, 11, false); // Верстак
-            addBlock(cx+1, cy+1, cz, 13, false); // Печка
-            addBlock(cx-1, cy+1, cz, 22, false); // Кровать
-            addBlock(cx, cy+1, cz+2, 23, false); // Дверь
+            addBlock(cx, cy+1, cz, 11, false);
+            addBlock(cx+1, cy+1, cz, 13, false);
+            addBlock(cx-1, cy+1, cz, 22, false);
+            addBlock(cx, cy+1, cz+2, 23, false);
         }
-        // ===============================================
 
         function generateChunk(cx, cz) {
             let key = `${cx},${cz}`; if (chunks.has(key)) return; chunks.set(key, true);
             let hasStructure = false;
-
-            // Шанс структуры в чанке
-            let structX = -1, structZ = -1, structType = 0;
+            let structX = -1, structZ = -1;
             if (Math.random() < 0.2) {
-                structX = Math.floor(Math.random() * 10) + 3; // 3-12 внутри чанка
+                structX = Math.floor(Math.random() * 10) + 3;
                 structZ = Math.floor(Math.random() * 10) + 3;
-                structType = 1;
             }
 
             for (let x = 0; x < CHUNK_SIZE; x++) {
                 for (let z = 0; z < CHUNK_SIZE; z++) {
                     let wx = cx * CHUNK_SIZE + x, wz = cz * CHUNK_SIZE + z;
                     let h = Math.floor(simplex.noise2D(wx / 40, wz / 40) * 8) + 15; 
-                    let biomeNoise = simplex.noise2D(wx / 150, wz / 150); // > 0.4 пустыня
+                    let biomeNoise = simplex.noise2D(wx / 150, wz / 150);
                     
                     if (x === structX && z === structZ && h > WATER_LEVEL && !hasStructure) {
                         hasStructure = true;
@@ -646,17 +638,17 @@
 
                     for (let y = 0; y <= Math.max(h, WATER_LEVEL); y++) {
                         let bKey = `${wx},${y},${wz}`;
-                        if (blockData.has(bKey)) continue; // НЕ затираем структуры
+                        if (blockData.has(bKey)) continue;
                         if (worldMods[bKey] && worldMods[bKey].action === 'break') continue;
                         if (worldMods[bKey] && worldMods[bKey].action === 'place') { addBlock(wx, y, wz, worldMods[bKey].type); continue; }
                         
                         if (y < h - 2 && y > 2 && simplex3D.noise3D(wx/15, y/15, wz/15) > 0.4) continue; 
                         let type = 3; 
                         
-                        if (y === h && y >= WATER_LEVEL) type = biomeNoise > 0.4 ? 14 : 1; // Песок или трава
-                        else if (y < h && y > h - 4) type = biomeNoise > 0.4 ? 16 : 2; // Песчаник или земля
-                        else if (y > h && y <= WATER_LEVEL) type = 7; // Вода
-                        else if (y < h - 4 && Math.random() < 0.03) type = 8; // Случайный булыжник в камне
+                        if (y === h && y >= WATER_LEVEL) type = biomeNoise > 0.4 ? 14 : 1;
+                        else if (y < h && y > h - 4) type = biomeNoise > 0.4 ? 16 : 2;
+                        else if (y > h && y <= WATER_LEVEL) type = 7;
+                        else if (y < h - 4 && Math.random() < 0.03) type = 8;
                         
                         addBlock(wx, y, wz, type);
                     }
@@ -685,10 +677,8 @@
         }
 
         function spawnDrop(x, y, z, id, count=1) {
-            if (!id || id===7 || id===9 || id===23) return; // Стекло и двери не дропаются
+            if (!id || id===7 || id===9 || id===23) return;
             let color = blockColors[id] || 0xffffff;
-            if(id===102) color=0xffaaaa; if(id===103) color=0xeeeeee; if(id===109) color=0xff3333;
-            
             let mesh = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), new THREE.MeshStandardMaterial({color: color, roughness:0.8}));
             mesh.position.set(x, y, z); mesh.castShadow = true; scene.add(mesh);
             drops.push({ mesh: mesh, id: id, count: count, ry: 0 });
@@ -698,19 +688,17 @@
             let color = type === 1 ? 0xeeeeee : 0xffaadd;
             let mesh = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({color: color}));
             mesh.position.set(x, y, z); mesh.castShadow = true; scene.add(mesh);
-            let mob = { id: Math.random().toString(36).substr(2, 9), mesh: mesh, type: type, vx: 0, vy: 0, vz: 0, hp: 5, rx: x, ry: y, rz: z, nextMove: 0 };
-            mobs.push(mob);
-            if(isHost) sendNetData({ type: 'mob_spawn', mob: { id: mob.id, x, y, z, type } });
+            mobs.push({ id: Math.random().toString(36).substr(2, 9), mesh: mesh, type: type, vx: 0, vy: 0, vz: 0, hp: 5, rx: x, ry: y, rz: z, nextMove: 0 });
         }
+
         function updateMobs() { 
             let now = performance.now();
             for(let i = mobs.length - 1; i >= 0; i--) {
-                let mob = mobs[i];
-                if (now > mob.nextMove) {
+                let m = mobs[i];
+                if (now > m.nextMove) {
                     let angle = Math.random() * Math.PI * 2, speed = Math.random() > 0.4 ? 1.5 : 0;
-                    mob.vx = Math.cos(angle) * speed; mob.vz = Math.sin(angle) * speed;
-                    if(Math.random() > 0.7 && blockData.has(`${Math.round(mob.rx)},${Math.round(mob.ry-1)},${Math.round(mob.rz)}`)) mob.vy = 5;
-                    mob.nextMove = now + 1000 + Math.random() * 2000;
+                    m.vx = Math.cos(angle) * speed; m.vz = Math.sin(angle) * speed;
+                    m.nextMove = now + 1000 + Math.random() * 2000;
                 }
             }
         }
@@ -737,12 +725,11 @@
             
             for(let i=0; i<3; i++) {
                 let row = document.createElement('div'); row.className = 'inv-row';
-                for(let j=0; j<9; j++) { let idx = i*9 + j; row.innerHTML += `<div class="slot inv-slot" data-type="main" data-idx="${idx}"></div>`; }
+                for(let j=0; j<9; j++) row.innerHTML += `<div class="slot inv-slot" data-type="main" data-idx="${i*9 + j}"></div>`;
                 main.appendChild(row);
             }
             for(let i=0; i<9; i++) {
                 hb.innerHTML += `<div class="slot inv-slot" data-type="hotbar" data-idx="${i}"></div>`;
-                // ЖЕСТКАЯ ПРИВЯЗКА КЛИКА ЧТОБЫ РАБОТАЛО ДАЖЕ ЕСЛИ ЕСТЬ OVERLAY
                 hudHb.innerHTML += `<div class="slot" id="hud-slot-${i}" onpointerdown="event.preventDefault(); selectHotbarSlot(${i});"></div>`;
                 cGrid.innerHTML += `<div class="slot inv-slot" data-type="craft" data-idx="${i}" id="craft-slot-${i}"></div>`;
             } selectHotbarSlot(0);
@@ -935,7 +922,7 @@
             inWater = false;
             for (let x = minX; x <= maxX; x++) for (let y = minY; y <= maxY; y++) for (let z = minZ; z <= maxZ; z++) {
                 let b = blockData.get(`${x},${y},${z}`);
-                if (b) { if(b.type === 7) inWater = true; else if(b.type !== 9 && b.type !== 23) return true; } // Сквозь двери и стекло нельзя ходить в этой версии, пусть будут твердыми (убрано из исключений)
+                if (b) { if(b.type === 7) inWater = true; else if(b.type !== 9 && b.type !== 23) return true; }
             }
             return false;
         }
@@ -966,9 +953,9 @@
             let activeItem = hotbar[activeHotbarSlot];
 
             if(isRightClick) {
-                if (hit && hit.type === 'block') {
-                    if (hit.blockType === 11) { openInventory('workbench'); return; }
-                    if (hit.blockType === 17) { openInventory('chest'); return; }
+                if (hit && hit.type === 'block' && hit.blockType === 11) {
+                    openInventory('workbench');
+                    return;
                 }
                 
                 if (activeItem && (activeItem.id === 102 || activeItem.id === 109)) { 
@@ -1012,6 +999,7 @@
             setCraftMode(mode);
             document.exitPointerLock(); 
             document.getElementById('inventory-ui').style.display = 'flex';
+            document.getElementById('hotbar').style.display = 'none'; // СКРЫВАЕМ ХОТБАР ВНУТРИ ВЕРСТАКА ЧТОБЫ НЕ ПЕРЕКРЫВАЛ!
             if(isMobile) document.getElementById('mobile-controls').style.display = 'none';
         }
 
@@ -1020,6 +1008,7 @@
             if (isInvOpen) {
                 isInvOpen = false;
                 document.getElementById('inventory-ui').style.display = 'none';
+                document.getElementById('hotbar').style.display = 'flex'; // ВОЗВРАЩАЕМ ХОТБАР
                 
                 if(cursorItem) { giveItem(cursorItem.id, cursorItem.count); cursorItem = null; } 
                 for(let i=0; i<9; i++) { if(craftGrid[i]) { giveItem(craftGrid[i].id, craftGrid[i].count); craftGrid[i] = null; } }
@@ -1113,25 +1102,42 @@
                 });
                 document.getElementById('touch-right').addEventListener('touchend', (e) => { e.preventDefault(); for(let i=0; i<e.changedTouches.length; i++) if(e.changedTouches[i].identifier === rightTouchId) rightTouchId = null; });
                 
+                // ИСПРАВЛЕННЫЙ МОБИЛЬНЫЙ ДЖОЙСТИК БЕЗ БАГОВ И ЗАЛИПАНИЙ
                 const joyBase = document.getElementById('joystick-base'), joyKnob = document.getElementById('joystick-knob');
                 let leftTouchId = null, joyCenter = {x:0, y:0};
                 document.getElementById('touch-left').addEventListener('touchstart', (e) => {
-                    e.preventDefault(); leftTouchId = e.changedTouches[0].identifier;
-                    joyBase.style.display = 'flex'; joyBase.style.left = (e.changedTouches[0].clientX - 55) + 'px'; joyBase.style.top = (e.changedTouches[0].clientY - 55) + 'px'; joyCenter = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                    e.preventDefault();
+                    if(leftTouchId !== null) return;
+                    let t = e.changedTouches[0];
+                    leftTouchId = t.identifier;
+                    joyBase.style.display = 'flex';
+                    joyBase.style.left = (t.clientX - 55) + 'px'; joyBase.style.top = (t.clientY - 55) + 'px';
+                    joyCenter = { x: t.clientX, y: t.clientY };
                 });
                 document.getElementById('touch-left').addEventListener('touchmove', (e) => {
                     e.preventDefault();
                     for(let i=0; i<e.changedTouches.length; i++) {
-                        if(e.changedTouches[i].identifier === leftTouchId) {
-                            let dx = e.changedTouches[i].clientX - joyCenter.x, dy = e.changedTouches[i].clientY - joyCenter.y;
+                        let t = e.changedTouches[i];
+                        if(t.identifier === leftTouchId) {
+                            let dx = t.clientX - joyCenter.x, dy = t.clientY - joyCenter.y;
                             let dist = Math.min(45, Math.sqrt(dx*dx + dy*dy)), angle = Math.atan2(dy, dx);
                             joyKnob.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
-                            moveState.right = Math.max(-1, Math.min(1, dx / 40)); moveState.forward = Math.max(-1, Math.min(1, -dy / 40)); 
+                            moveState.right = Math.max(-1, Math.min(1, dx / 40)); 
+                            moveState.forward = Math.max(-1, Math.min(1, -dy / 40)); 
                         }
                     }
                 });
-                const resetLeftJoy = (e) => { e.preventDefault(); for(let i=0; i<e.changedTouches.length; i++) if(e.changedTouches[i].identifier === leftTouchId) { leftTouchId = null; moveState.forward = 0; moveState.right = 0; joyBase.style.display = 'none'; joyKnob.style.transform = 'translate(0,0)'; } };
+                const resetLeftJoy = (e) => {
+                    e.preventDefault();
+                    for(let i=0; i<e.changedTouches.length; i++) {
+                        if(e.changedTouches[i].identifier === leftTouchId) {
+                            leftTouchId = null; moveState.forward = 0; moveState.right = 0; 
+                            joyBase.style.display = 'none'; joyKnob.style.transform = 'translate(0,0)';
+                        }
+                    }
+                };
                 document.getElementById('touch-left').addEventListener('touchend', resetLeftJoy);
+                document.getElementById('touch-left').addEventListener('touchcancel', resetLeftJoy);
             }
         }
 
