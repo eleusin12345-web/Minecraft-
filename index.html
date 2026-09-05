@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WebCraft V4.4 - Fixed UI & Furnaces</title>
+    <title>WebCraft V4.3 - Biomes & Structures</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
         
@@ -40,17 +40,17 @@
         #break-progress-container { position: absolute; top: 56%; left: 50%; transform: translateX(-50%); width: 50px; height: 10px; background: rgba(0,0,0,0.8); border: 2px solid #333; display: none; border-radius: 3px; overflow: hidden; }
         #break-progress-bar { width: 0%; height: 100%; background: #55ff55; }
 
-        /* Хотбар */
-        #hotbar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0, 0, 0, 0.7); padding: 6px; pointer-events: auto; border-radius: 6px; border: 2px solid rgba(255,255,255,0.15); z-index: 100; }
+        /* Хотбар (С ВЫСОКИМ Z-INDEX ЧТОБЫ РАБОТАЛО НА ТЕЛЕФОНЕ) */
+        #hotbar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; background: rgba(0, 0, 0, 0.7); padding: 6px; pointer-events: auto; border-radius: 6px; border: 2px solid rgba(255,255,255,0.15); z-index: 1000; }
         .slot { width: 44px; height: 44px; background: #8b8b8b; border: 2px solid #373737; border-top-color: #fff; border-left-color: #fff; position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center; border-radius: 3px; }
         .slot.active { border-color: #ffff33; box-shadow: inset 0 0 0 2px #ffff33; }
         .item-icon { width: 75%; height: 75%; background-size: contain; background-repeat: no-repeat; background-position: center; pointer-events: none; }
         .item-count { position: absolute; bottom: 1px; right: 3px; color: white; font-size: 16px; text-shadow: 2px 2px 0 #000; pointer-events: none; z-index: 2;}
 
         /* Инвентарь UI */
-        #inventory-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1500; display: none; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(2px); }
+        #inventory-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 150; display: none; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(2px); }
         .inv-window { background: #c6c6c6; border: 3px solid #333; border-top-color: #fff; border-left-color: #fff; padding: 12px; width: 340px; display: flex; flex-direction: column; align-items: center; position: relative; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .close-btn { position: absolute; top: -15px; right: -15px; background: #c63636; color: white; border: 2px solid #500; font-family: inherit; font-size: 20px; width: 40px; height: 40px; cursor: pointer; font-weight: bold; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0 #222; z-index: 2000; }
+        .close-btn { position: absolute; top: -15px; right: -15px; background: #c63636; color: white; border: 2px solid #500; font-family: inherit; font-size: 20px; width: 40px; height: 40px; cursor: pointer; font-weight: bold; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 2px 2px 0 #222; z-index: 10; }
         .close-btn:hover { background: #e04444; }
         .inv-window .slot { width: 34px; height: 34px; } 
         #inv-mode-btn { background: #555; color: #55ff55; border: 2px solid #222; font-family: inherit; font-size: 14px; padding: 3px 6px; margin-bottom: 8px; cursor: pointer; border-radius: 3px; width: 100%; text-align: center; }
@@ -58,7 +58,7 @@
         .crafting-area { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; background: #b0b0b0; padding: 6px; border-radius: 4px; border: 2px inset #888; width: 100%; }
         .craft-grid { display: grid; gap: 2px; }
         .arrow { font-size: 22px; font-weight: bold; color: #444; }
-        #cursor-item { position: absolute; pointer-events: none; z-index: 3000; display: none; width: 38px; height: 38px; }
+        #cursor-item { position: absolute; pointer-events: none; z-index: 200; display: none; width: 38px; height: 38px; }
         
         #death-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(180, 0, 0, 0.85); z-index: 250; display: none; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; }
         #death-screen h1 { color: white; text-shadow: 4px 4px 0 #000; margin-bottom: 25px; font-size: 48px; }
@@ -70,6 +70,7 @@
 
         /* Мобильное управление */
         #mobile-controls { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 60; }
+        /* ОБРЕЗАЕМ ЗОНУ ДЖОЙСТИКА, ЧТОБЫ НЕ ПЕРЕКРЫВАТЬ ХОТБАР! */
         .touch-zone { position: absolute; top: 0; height: calc(100% - 90px); width: 50%; pointer-events: auto; }
         #touch-left { left: 0; } #touch-right { right: 0; }
         #joystick-base { position: absolute; bottom: 105px; left: 25px; width: 110px; height: 110px; background: rgba(255, 255, 255, 0.15); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 50%; display: none; justify-content: center; align-items: center; pointer-events: none; }
@@ -83,7 +84,7 @@
         #btn-place { bottom: 185px; right: 25px; width: 55px; height: 55px; font-size: 22px; } 
         #btn-inv-mobile { top: 12px; right: 12px; width: 42px; height: 42px; border-radius: 6px; font-size: 20px; }
 
-        /* ИКОНКИ */
+        /* ИКОНКИ ДЛЯ ИНВЕНТАРЯ */
         .icon-0 { background: transparent; } 
         .icon-1 { background: linear-gradient(#559c3f 25%, #7a5c3d 25%); border-radius: 2px; } 
         .icon-2 { background: #7a5c3d; border-radius: 2px; } 
@@ -95,18 +96,60 @@
         .icon-8 { background: #777; border-radius: 2px; box-shadow: inset 1px 1px 0 #999, inset -1px -1px 0 #444; } 
         .icon-9 { background: #ffffff; border: 2px solid #ccc; opacity: 0.7; } 
         .icon-10 { background: #555; border: 1px dashed #777; } 
-        .icon-11 { background: #8b5a2b; border: 2px solid #5c3a21; border-radius: 2px; } 
+        .icon-11 { background: #8b5a2b; border: 2px solid #5c3a21; border-radius: 2px; position: relative; } 
+        .icon-11::after{ content: ''; position: absolute; top:15%; left:15%; width:70%; height:70%; border: 1px dashed #3a2211; }
         .icon-12 { background: #5c4033; border: 1px solid #3a2211; border-radius: 2px; width: 55%!important; }
-        .icon-13 { background: #777; border: 2px solid #555; border-radius: 2px; }
+        .icon-13 { background: #777; border: 2px solid #555; position: relative; border-radius: 2px; }
+        .icon-13::after { content: ''; position: absolute; bottom: 10%; left: 10%; width: 80%; height: 40%; background: #222; border-top: 1px solid #444; }
         .icon-14 { background: #dcb38a; border-radius: 2px; }
-        .icon-15 { background: #888; border-radius: 2px; } 
+        .icon-15 { background: #888; border-radius: 2px; position: relative; } 
+        .icon-15::after { content:''; position: absolute; top:20%; left:20%; width:15%; height:15%; background: #dcb38a; box-shadow: 8px 8px 0 #dcb38a; }
         .icon-16 { background: #dcb38a; border-bottom: 3px solid #b8936d; border-radius: 2px; }
-        .icon-17 { background: #cda26f; border: 2px solid #5c4033; border-radius: 2px; }
-        .icon-18 { background: #9e4431; border: 1px solid #773322; border-radius: 2px; }
-        .icon-19 { background: #cda26f; border-top: 2px solid #5c4033; border-bottom: 2px solid #5c4033; border-radius: 2px; }
-        .icon-20 { background: #f1c40f; border-radius: 2px; } /* Золотая руда */
-        .icon-21 { background: #00ffff; border-radius: 2px; } /* Алмазная руда */
-        .icon-24 { background: #111; border: 2px solid #333; border-radius: 2px; } /* Обсидиан */
+        .icon-17 { background: #cda26f; border: 2px solid #5c4033; position: relative; border-radius: 2px; }
+        .icon-17::after { content: ''; position: absolute; top: 40%; left: 45%; width: 10%; height: 20%; background: #dcdcdc; border: 1px solid #333; }
+        .icon-18 { background: #9e4431; border: 1px solid #773322; border-radius: 2px; position: relative;}
+        .icon-18::after { content: ''; position: absolute; top:40%; left:0; width:100%; height:2px; background: #bbb;}
+        .icon-19 { background: #cda26f; border-top: 2px solid #5c4033; border-bottom: 2px solid #5c4033; position: relative; border-radius: 2px; }
+        .icon-19::after { content: '|||'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; color: #3498db; text-shadow: 2px 0 0 #e74c3c, 4px 0 0 #2ecc71; font-size: 14px; display: flex; align-items: center; overflow: hidden; letter-spacing: 2px; font-weight: bold;}
+        .icon-22 { background: #cda26f; border-top: 4px solid #e74c3c; border-left: 4px solid #fff; border-radius: 2px; }
+        .icon-23 { background: #cda26f; border: 1px solid #8b6b43; border-radius: 2px; position: relative; }
+        .icon-23::after { content:''; position: absolute; top: 10%; left: 20%; width: 60%; height: 30%; background: #fff; opacity: 0.5; border: 1px solid #5c4033;}
+        
+        .icon-100 { background: #8b6b43; width: 5px!important; height: 75%!important; transform: rotate(45deg); margin: auto; border-radius: 2px; } 
+        .icon-110 { background: #ddd; width: 65%!important; height: 35%!important; border-radius: 3px; border: 1px solid #aaa; margin: auto; box-shadow: inset 1px 1px 0 #fff; }
+        
+        .pickaxe { background: transparent; position: relative; width: 100%!important; height: 100%!important; }
+        .pickaxe::before { content: ''; position: absolute; width: 4px; height: 65%; background: #8b6b43; transform: rotate(45deg); left: 46%; top: 22%; border-radius: 1px; }
+        .pickaxe::after { content: ''; position: absolute; width: 75%; height: 12px; transform: rotate(45deg); top: 12%; left: 4%; border-radius: 4px; }
+        .icon-101::after { background: #cda26f; border: 2px solid #6b4b23; } 
+        .icon-104::after { background: #888; border: 2px solid #444; } 
+        .icon-105::after { background: #f0f0f0; border: 2px solid #888; box-shadow: inset 1px 1px 0 #fff; } 
+        
+        .sword { background: transparent; position: relative; width: 100%!important; height: 100%!important; }
+        .sword::before { content: ''; position: absolute; width: 4px; height: 25%; background: #5c3a21; transform: rotate(45deg); left: 28%; top: 62%; border-radius: 1px; }
+        .sword::after { content: ''; position: absolute; width: 5px; height: 70%; transform: rotate(45deg); top: 10%; left: 48%; border-radius: 2px; }
+        .icon-106::after { background: #cda26f; border: 1px solid #6b4b23; } 
+        .icon-107::after { background: #888; border: 1px solid #444; } 
+        .icon-108::after { background: #f0f0f0; border: 1px solid #888; box-shadow: inset 1px 1px 0 #fff; } 
+        
+        .axe { background: transparent; position: relative; width: 100%!important; height: 100%!important; }
+        .axe::before { content: ''; position: absolute; width: 4px; height: 65%; background: #8b6b43; transform: rotate(45deg); left: 46%; top: 22%; border-radius: 1px; }
+        .axe::after { content: ''; position: absolute; width: 45%; height: 25%; transform: rotate(45deg); top: 15%; left: 25%; border-radius: 2px; }
+        .icon-111::after { background: #cda26f; border: 1px solid #6b4b23; }
+        .icon-112::after { background: #888; border: 1px solid #444; }
+        .icon-113::after { background: #f0f0f0; border: 1px solid #888; }
+
+        .shovel { background: transparent; position: relative; width: 100%!important; height: 100%!important; }
+        .shovel::before { content: ''; position: absolute; width: 4px; height: 65%; background: #8b6b43; transform: rotate(45deg); left: 46%; top: 22%; border-radius: 1px; }
+        .shovel::after { content: ''; position: absolute; width: 25%; height: 35%; transform: rotate(45deg); top: 10%; left: 65%; border-radius: 2px; }
+        .icon-114::after { background: #cda26f; border: 1px solid #6b4b23; }
+        .icon-115::after { background: #888; border: 1px solid #444; }
+        .icon-116::after { background: #f0f0f0; border: 1px solid #888; }
+
+        .icon-102 { background: #ffaaaa; border-radius: 50%; width: 75%!important; height: 75%!important; margin: 12%; box-shadow: inset 2px 2px 0 #fff; } 
+        .icon-103 { background: #eeeeee; border-radius: 20%; border: 2px dashed #ccc; } 
+        .icon-109 { background: #ff3333; border-radius: 50%; width: 60%!important; height: 60%!important; margin: 20%; position:relative; box-shadow: inset 2px 2px 0 #ff8888; } 
+        .icon-109::after { content:''; position:absolute; top:-3px; left:40%; width:2px; height:6px; background:#55ff55; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
@@ -117,7 +160,7 @@
 
     <div id="menu">
         <h1>WebCraft</h1>
-        <p class="subtitle">V4.4 Update: Исправление интерфейса и Печь/Сундук!</p>
+        <p class="subtitle">V4.3 Update: Биомы, Структуры и Идеальный Хотбар!</p>
         <input type="text" id="player-name-input" placeholder="Твой никнейм" value="Steve">
         <button class="btn" id="btn-single">Одиночная игра</button>
         <button class="btn" id="btn-host">Создать LAN Сервер</button>
@@ -138,16 +181,17 @@
         <button class="btn" onclick="location.reload()">В меню</button>
     </div>
 
-    <!-- Инвентарь / Верстак / Печь / Сундук UI -->
+    <!-- Инвентарь UI -->
     <div id="inventory-ui">
-        <div class="inv-window" id="inv-window-container">
+        <div class="inv-window">
             <button class="close-btn" onclick="toggleInventory()">X</button>
             <h3 style="margin:0 0 6px 0; color:#333; font-size:22px;" id="inv-title">Инвентарь</h3>
             <button id="inv-mode-btn" onclick="toggleInvMode()">Режим: ВСЁ</button>
-            
-            <!-- Динамическая зона (Крафт / Печь / Сундук) -->
-            <div id="ui-dynamic-panel" style="width: 100%; display: flex; flex-direction: column; align-items: center;"></div>
-            
+            <div class="crafting-area">
+                <div class="craft-grid" id="craft-grid-ui"></div>
+                <div class="arrow">➔</div>
+                <div class="slot inv-slot" data-type="craftOut" data-idx="0" style="width:40px; height:40px; border-color:#222; background:#888;"></div>
+            </div>
             <div id="inv-main"></div>
             
             <div style="width: 100%; text-align: center; font-size: 16px; color: #444; margin: 4px 0 2px 0; font-weight: bold;">Хотбар</div>
@@ -174,7 +218,7 @@
         </div>
     </div>
 
-    <!-- Хотбар снаружи -->
+    <!-- Хотбар вынесен наружу, чтобы точно ловить клики -->
     <div id="hotbar"></div>
 
     <div id="mobile-controls">
@@ -188,6 +232,7 @@
     </div>
 
     <script>
+        // === ГЕНЕРАТОР ПИКСЕЛЬНЫХ ТЕКСТУР ===
         const textureCache = {};
         function createPixelTexture(type) {
             if(textureCache[type]) return textureCache[type];
@@ -205,21 +250,90 @@
                 }
             };
 
-            if(type === 'dirt') drawNoise('#7a5c3d', 30);
-            else if(type === 'grass_top') drawNoise('#559c3f', 40);
-            else if(type === 'grass_side') { drawNoise('#7a5c3d', 30); drawNoise('#559c3f', 40, 0, 4); }
-            else if(type === 'stone') drawNoise('#888888', 25);
-            else if(type === 'cobble') drawNoise('#777777', 40);
-            else if(type === 'planks') drawNoise('#cda26f', 20);
-            else if(type === 'log_side') drawNoise('#5c4033', 15);
-            else if(type === 'log_top') drawNoise('#8b5a2b', 10);
-            else if(type === 'leaves') { ctx.clearRect(0,0,16,16); drawNoise('#3a7a3a', 40); }
-            else if(type === 'water') drawNoise('#3498db', 15);
-            else if(type === 'glass') { ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillRect(0,0,16,16); }
-            else if(type === 'gold_ore') { drawNoise('#888888', 20); ctx.fillStyle = '#f1c40f'; ctx.fillRect(3,3,3,3); ctx.fillRect(10,9,4,3); }
-            else if(type === 'diamond_ore') { drawNoise('#888888', 20); ctx.fillStyle = '#00ffff'; ctx.fillRect(4,5,3,3); ctx.fillRect(11,2,2,2); }
-            else if(type === 'obsidian') drawNoise('#111122', 10);
-            else drawNoise('#ffffff', 0);
+            if(type === 'dirt') { drawNoise('#7a5c3d', 30); }
+            else if(type === 'grass_top') { drawNoise('#559c3f', 40); }
+            else if(type === 'grass_side') { 
+                drawNoise('#7a5c3d', 30); drawNoise('#559c3f', 40, 0, 4); 
+                for(let x=0; x<16; x++) if(Math.random()>0.5) drawNoise('#559c3f', 40, 4, 5+Math.random()*2);
+            }
+            else if(type === 'stone') { drawNoise('#888888', 25); }
+            else if(type === 'cobble') { 
+                drawNoise('#777777', 40); 
+                ctx.fillStyle = 'rgba(0,0,0,0.4)'; for(let i=0; i<10; i++) { ctx.fillRect(Math.random()*16, Math.random()*16, 2, 2); }
+                ctx.fillStyle = 'rgba(255,255,255,0.2)'; for(let i=0; i<10; i++) { ctx.fillRect(Math.random()*16, Math.random()*16, 2, 2); }
+            }
+            else if(type === 'planks') { 
+                drawNoise('#cda26f', 20); ctx.fillStyle = '#8b6b43';
+                for(let y=0; y<16; y+=4) { ctx.fillRect(0,y,16,1); ctx.fillRect(Math.random()*16, y, 1, 4); }
+            }
+            else if(type === 'log_side') { 
+                drawNoise('#5c4033', 15); ctx.fillStyle = '#3a2211';
+                for(let x=0; x<16; x+=3+Math.random()*2) ctx.fillRect(x,0,1,16);
+            }
+            else if(type === 'log_top') { 
+                drawNoise('#8b5a2b', 10); ctx.strokeStyle = '#5c3a21'; ctx.lineWidth=1;
+                for(let r=2; r<8; r+=2) ctx.strokeRect(8-r, 8-r, r*2, r*2);
+            }
+            else if(type === 'leaves') {
+                ctx.clearRect(0,0,16,16); drawNoise('#3a7a3a', 40);
+                for(let i=0; i<40; i++) ctx.clearRect(Math.random()*16, Math.random()*16, 1, 1);
+            }
+            else if(type === 'water') { 
+                drawNoise('#3498db', 15); ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(0, Math.random()*16, 16, 1); 
+            }
+            else if(type === 'glass') { 
+                ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(0,0,16,16); 
+                ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth=1; ctx.strokeRect(0,0,16,16);
+                ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fillRect(2,2,4,1); ctx.fillRect(2,3,1,3);
+            }
+            else if(type === 'workbench_top') {
+                drawNoise('#cda26f', 20); ctx.fillStyle = '#5c4033';
+                for(let x=1; x<16; x+=5) ctx.fillRect(x,0,1,16); for(let y=1; y<16; y+=5) ctx.fillRect(0,y,16,1);
+            }
+            else if(type === 'workbench_side') {
+                drawNoise('#cda26f', 20); ctx.fillStyle = '#8b5a2b'; ctx.fillRect(0,0,16,4);
+                ctx.fillStyle = '#333'; ctx.fillRect(4,2,2,2); ctx.fillRect(10,2,2,2);
+            }
+            else if(type === 'furnace_front') {
+                drawNoise('#777777', 20); ctx.fillStyle = '#333'; ctx.fillRect(2, 2, 12, 12);
+                ctx.fillStyle = '#111'; ctx.fillRect(4, 4, 8, 8); ctx.fillStyle = '#ffaa00'; ctx.fillRect(5, 10, 6, 2);
+            }
+            else if(type === 'chest_front') {
+                drawNoise('#cda26f', 20); ctx.fillStyle = '#8b6b43';
+                ctx.fillRect(0, 0, 16, 1); ctx.fillRect(0, 15, 16, 1); ctx.fillRect(0, 0, 1, 16); ctx.fillRect(15, 0, 1, 16);
+                ctx.fillRect(0, 6, 16, 1); ctx.fillStyle = '#333'; ctx.fillRect(7, 5, 2, 3);
+            }
+            else if(type === 'stonebrick') {
+                drawNoise('#777777', 15); ctx.fillStyle = '#444';
+                ctx.fillRect(0,7,16,1); ctx.fillRect(0,15,16,1); ctx.fillRect(7,0,1,7); ctx.fillRect(12,8,1,7); ctx.fillRect(2,8,1,7);
+            }
+            else if(type === 'sand') { drawNoise('#dcb38a', 20); }
+            else if(type === 'sandstone_side') {
+                drawNoise('#dcb38a', 20); ctx.fillStyle = '#b8936d'; ctx.fillRect(0, 14, 16, 2); ctx.fillRect(0, 0, 16, 1);
+            }
+            else if(type === 'brick') {
+                drawNoise('#9e4431', 20); ctx.fillStyle = '#bbb';
+                for(let y=3; y<16; y+=4) ctx.fillRect(0,y,16,1);
+                for(let x=3; x<16; x+=8) { ctx.fillRect(x,0,1,3); ctx.fillRect(x+4,4,1,3); ctx.fillRect(x,8,1,3); ctx.fillRect(x+4,12,1,3); }
+            }
+            else if(type === 'bookshelf_side') {
+                drawNoise('#5c4033', 10);
+                const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#ffffff'];
+                for(let x=1; x<15; x+=2) { ctx.fillStyle = colors[Math.floor(Math.random()*colors.length)]; ctx.fillRect(x, 1, 1+Math.random(), 6); }
+                ctx.fillStyle = '#444'; ctx.fillRect(0,7,16,2);
+                for(let x=1; x<15; x+=2) { ctx.fillStyle = colors[Math.floor(Math.random()*colors.length)]; ctx.fillRect(x, 9, 1+Math.random(), 6); }
+            }
+            else if(type === 'bed_top') { drawNoise('#e74c3c', 10); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,16,5); }
+            else if(type === 'bed_side') {
+                drawNoise('#cda26f', 15); ctx.fillStyle = '#e74c3c'; ctx.fillRect(0,0,16,8);
+                ctx.fillStyle = '#fff'; ctx.fillRect(0,0,5,8); ctx.clearRect(5,8,6,8); 
+            }
+            else if(type === 'door') {
+                drawNoise('#cda26f', 15); ctx.fillStyle = '#5c4033'; ctx.fillRect(0,0,16,16);
+                ctx.fillStyle = '#cda26f'; ctx.fillRect(2,2,12,5); ctx.fillRect(2,9,12,5);
+                ctx.clearRect(3,3,10,3); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(3,3,10,3);
+            }
+            else { drawNoise('#ffffff', 0); }
 
             let tex = new THREE.CanvasTexture(cvs);
             tex.magFilter = THREE.NearestFilter; tex.minFilter = THREE.NearestFilter;
@@ -235,7 +349,6 @@
         const MAX_BLOCKS = 120000;
         let instancedMeshes = {}, blockData = new Map(), blockIndexToKey = {};
         let chunks = new Map(), chunkQueue = [], chunkBlocks = new Map(), worldMods = {}; 
-        let chestStorage = {}; // Хранилище сундуков по координатам
         
         const CHUNK_SIZE = 16, VIEW_DISTANCE = 3, WATER_LEVEL = 12;
         const simplex = new SimplexNoise('craft-seed'), simplex3D = new SimplexNoise('craft-cave');
@@ -245,29 +358,25 @@
         let myName = "Player";
         
         const INV_SIZE = 27, HOTBAR_SIZE = 9, CRAFT_SIZE = 9;
-        let inventory = new Array(INV_SIZE).fill(null), hotbar = new Array(HOTBAR_SIZE).fill(null);
-        let craftGrid = new Array(CRAFT_SIZE).fill(null), craftResult = null;
-        let furnaceInput = null, furnaceFuel = null, furnaceOutput = null, furnaceProgress = 0;
-        let chestGrid = new Array(18).fill(null); // Сундук на 18 слотов
-        let activeChestKey = null;
-
+        let inventory = new Array(INV_SIZE).fill(null), hotbar = new Array(HOTBAR_SIZE).fill(null), craftGrid = new Array(CRAFT_SIZE).fill(null), craftResult = null;
         let activeHotbarSlot = 0, cursorItem = null, isInvOpen = false, invMode = 'all', currentCraftMode = 'inv', hoveredSlot = null;
 
         hotbar[0] = { id: 111, count: 1 }; hotbar[1] = { id: 104, count: 1 }; hotbar[2] = { id: 6, count: 64 }; hotbar[3] = { id: 14, count: 64 };
 
         const RECIPES = [
-            { in: "4,|", out: {id: 6, count: 4} },
-            { in: "6,|,6,|", out: {id: 100, count: 4} },
-            { in: "6,6,|,6,6,|", out: {id: 11, count: 1} },
-            { in: "8,8,8,|,8,0,8,|,8,8,8,|", out: {id: 13, count: 1} },
-            { in: "6,6,6,|,6,0,6,|,6,6,6,|", out: {id: 17, count: 1} },
-            { in: "3,3,|,3,3,|", out: {id: 10, count: 4} },
-            { in: "14,14,|,14,14,|", out: {id: 16, count: 4} },
-            { in: "10,10,|,10,10,|", out: {id: 18, count: 4} },
-            { in: "6,6,6,|,100,100,100,|,6,6,6,|", out: {id: 19, count: 1} },
-            { in: "5,5,5,|,6,6,6,|", out: {id: 22, count: 1} },
-            { in: "6,6,|,6,6,|,6,6,|", out: {id: 23, count: 3} },
-            { in: "14,|,6,|", out: {id: 9, count: 2} },
+            { in: "4,|", out: {id: 6, count: 4} }, // Доски
+            { in: "6,|,6,|", out: {id: 100, count: 4} }, // Палки
+            { in: "6,6,|,6,6,|", out: {id: 11, count: 1} }, // Верстак
+            { in: "8,8,8,|,8,0,8,|,8,8,8,|", out: {id: 13, count: 1} }, // Печь
+            { in: "6,6,6,|,6,0,6,|,6,6,6,|", out: {id: 17, count: 1} }, // Сундук
+            { in: "3,3,|,3,3,|", out: {id: 10, count: 4} }, // Каменные кирпичи
+            { in: "14,14,|,14,14,|", out: {id: 16, count: 4} }, // Песчаник
+            { in: "10,10,|,10,10,|", out: {id: 18, count: 4} }, // Кирпичи
+            { in: "6,6,6,|,100,100,100,|,6,6,6,|", out: {id: 19, count: 1} }, // Книжная полка
+            { in: "5,5,5,|,6,6,6,|", out: {id: 22, count: 1} }, // Кровать
+            { in: "6,6,|,6,6,|,6,6,|", out: {id: 23, count: 3} }, // Двери
+            { in: "14,|,6,|", out: {id: 9, count: 2} }, // Стекло (замена печки)
+            
             { in: "6,6,6,|,0,100,0,|,0,100,0,|", out: {id: 101, count: 1} },
             { in: "8,8,8,|,0,100,0,|,0,100,0,|", out: {id: 104, count: 1} },
             { in: "110,110,110,|,0,100,0,|,0,100,0,|", out: {id: 105, count: 1} },
@@ -275,11 +384,14 @@
             { in: "8,|,8,|,100,|", out: {id: 107, count: 1} },
             { in: "110,|,110,|,100,|", out: {id: 108, count: 1} },
             { in: "6,6,|,6,100,|,0,100,|", out: {id: 111, count: 1} },
+            { in: "6,6,|,100,6,|,100,0,|", out: {id: 111, count: 1} }, 
             { in: "8,8,|,8,100,|,0,100,|", out: {id: 112, count: 1} },
+            { in: "8,8,|,100,8,|,100,0,|", out: {id: 112, count: 1} }, 
             { in: "110,110,|,110,100,|,0,100,|", out: {id: 113, count: 1} },
             { in: "6,|,100,|,100,|", out: {id: 114, count: 1} },
             { in: "8,|,100,|,100,|", out: {id: 115, count: 1} },
-            { in: "110,|,100,|,100,|", out: {id: 116, count: 1} }
+            { in: "110,|,100,|,100,|", out: {id: 116, count: 1} },
+            { in: "6,6,|,6,6,|,6,6,|", out: {id: 12, count: 3} }
         ];
 
         let health = 10, hunger = 10, hungerExhaustion = 0, isDead = false;
@@ -289,9 +401,10 @@
         const euler = new THREE.Euler(0, 0, 0, 'YXZ');
         let drops = [], mobs = [], particles = [];
         let miningBlock = null, mineProgress = 0, isMining = false;
+        
         let handGroup, handMesh, handAnim = 0, walkAnim = 0;
         let audioCtx = null;
-
+        
         function initAudio() { 
             if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); 
             if(audioCtx.state === 'suspended') audioCtx.resume().catch(e => console.warn(e)); 
@@ -304,27 +417,39 @@
             if (type === 'step') { osc.type = 'square'; osc.frequency.setValueAtTime(80, t); osc.frequency.exponentialRampToValueAtTime(10, t + 0.05); gain.gain.setValueAtTime(0.05, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05); osc.start(t); osc.stop(t + 0.05); } 
             else if (type === 'hit') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, t); osc.frequency.exponentialRampToValueAtTime(50, t + 0.1); gain.gain.setValueAtTime(0.2, t); gain.gain.linearRampToValueAtTime(0, t + 0.1); osc.start(t); osc.stop(t + 0.1); } 
             else if (type === 'break') { osc.type = 'square'; osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(30, t + 0.1); gain.gain.setValueAtTime(0.2, t); gain.gain.linearRampToValueAtTime(0, t + 0.1); osc.start(t); osc.stop(t + 0.1); }
+            else if (type === 'eat') { osc.type = 'sine'; osc.frequency.setValueAtTime(200, t); osc.frequency.linearRampToValueAtTime(300, t + 0.15); gain.gain.setValueAtTime(0.3, t); gain.gain.linearRampToValueAtTime(0, t + 0.15); osc.start(t); osc.stop(t + 0.15); }
         }
 
-        const blockColors = { 1:0x559c3f, 2:0x7a5c3d, 3:0x888888, 4:0x5c4033, 5:0x3a7a3a, 6:0xcda26f, 8:0x777777, 9:0xffffff, 10:0x666666, 11:0x8b5a2b, 12:0x5c4033, 13:0x777777, 14:0xdcb38a, 15:0x888888, 16:0xdcb38a, 17:0xcda26f, 18:0x9e4431, 19:0x5c4033, 20:0xf1c40f, 21:0x00ffff, 22:0xe74c3c, 23:0xcda26f, 24:0x111122 };
+        const blockColors = { 1:0x559c3f, 2:0x7a5c3d, 3:0x888888, 4:0x5c4033, 5:0x3a7a3a, 6:0xcda26f, 8:0x777777, 9:0xffffff, 10:0x666666, 11:0x8b5a2b, 12:0x5c4033, 13:0x777777, 14:0xdcb38a, 15:0x888888, 16:0xdcb38a, 17:0xcda26f, 18:0x9e4431, 19:0x5c4033, 22:0xe74c3c, 23:0xcda26f };
 
         function getMineSpeed(blockId, toolId) {
             let speed = 1.0; 
-            let isStone = [3, 8, 10, 13, 15, 16, 18, 20, 21, 24].includes(blockId);
+            let isStone = [3, 8, 10, 13, 15, 16, 18].includes(blockId);
             let isWood = [4, 6, 11, 12, 17, 19, 22, 23].includes(blockId);
             let isDirt = [1, 2, 14].includes(blockId);
+
             if (isStone) speed = 0.15;
             if (isDirt) speed = 1.5;
-            if (blockId === 5) speed = 5.0;
+            if (blockId === 5) speed = 5.0; 
+            if (blockId === 9) speed = 3.0; 
+
+            if (toolId === 101 && isStone) speed = 1.0;
             if (toolId === 104 && isStone) speed = 2.0;
             if (toolId === 105 && isStone) speed = 4.0;
+            if (toolId === 111 && isWood) speed = 2.0;
             if (toolId === 112 && isWood) speed = 4.0;
+            if (toolId === 113 && isWood) speed = 8.0;
+            if (toolId === 114 && isDirt) speed = 3.0;
             if (toolId === 115 && isDirt) speed = 6.0;
+            if (toolId === 116 && isDirt) speed = 12.0;
+            if ([106, 107, 108].includes(toolId) && blockId === 5) speed = 8.0; 
             return speed;
         }
 
         function getWeaponDamage(toolId) {
             if (toolId === 106) return 3; if (toolId === 107) return 4; if (toolId === 108) return 6; 
+            if (toolId === 111) return 2; if (toolId === 112) return 3; if (toolId === 113) return 5; 
+            if (toolId === 101 || toolId === 104 || toolId === 105 || toolId === 114 || toolId === 115 || toolId === 116) return 2;
             return 1;
         }
 
@@ -353,6 +478,8 @@
             ambientLight = new THREE.AmbientLight(0xffffff, 0.3); scene.add(ambientLight);
             dirLight = new THREE.DirectionalLight(0xfff5e6, 0.9); 
             dirLight.castShadow = true; dirLight.shadow.mapSize.width = 1024; dirLight.shadow.mapSize.height = 1024;
+            dirLight.shadow.camera.near = 0.5; dirLight.shadow.camera.far = 100;
+            let d = 25; dirLight.shadow.camera.left = -d; dirLight.shadow.camera.right = d; dirLight.shadow.camera.top = d; dirLight.shadow.camera.bottom = -d;
             scene.add(dirLight); scene.add(dirLight.target);
 
             renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
@@ -370,23 +497,37 @@
         }
 
         function getMaterial(type) {
-            let mName = 'stone';
-            if(type===1) mName='grass_side'; if(type===2) mName='dirt'; if(type===4) mName='log_side';
-            if(type===5) return new THREE.MeshStandardMaterial({map: createPixelTexture('leaves'), transparent: true, alphaTest: 0.5});
-            if(type===6) mName='planks'; if(type===7) return new THREE.MeshStandardMaterial({map: createPixelTexture('water'), transparent:true, opacity:0.7});
-            if(type===9) return new THREE.MeshStandardMaterial({map: createPixelTexture('glass'), transparent:true});
-            if(type===20) mName='gold_ore'; if(type===21) mName='diamond_ore'; if(type===24) mName='obsidian';
-            return new THREE.MeshStandardMaterial({map: createPixelTexture(mName), roughness: 0.8});
+            if(type === 1) return [new THREE.MeshStandardMaterial({map: createPixelTexture('grass_side'), roughness: 1}), new THREE.MeshStandardMaterial({map: createPixelTexture('grass_side'), roughness: 1}), new THREE.MeshStandardMaterial({map: createPixelTexture('grass_top'), roughness: 1}), new THREE.MeshStandardMaterial({map: createPixelTexture('dirt'), roughness: 1}), new THREE.MeshStandardMaterial({map: createPixelTexture('grass_side'), roughness: 1}), new THREE.MeshStandardMaterial({map: createPixelTexture('grass_side'), roughness: 1})];
+            if(type === 2) return new THREE.MeshStandardMaterial({map: createPixelTexture('dirt'), roughness: 1});
+            if(type === 3) return new THREE.MeshStandardMaterial({map: createPixelTexture('stone'), roughness: 0.8});
+            if(type === 4) return [new THREE.MeshStandardMaterial({map: createPixelTexture('log_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('log_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('log_top'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('log_top'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('log_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('log_side'), roughness: 0.9})];
+            if(type === 5) return new THREE.MeshStandardMaterial({map: createPixelTexture('leaves'), transparent: true, alphaTest: 0.5, side: THREE.DoubleSide});
+            if(type === 6) return new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9});
+            if(type === 7) return new THREE.MeshStandardMaterial({map: createPixelTexture('water'), transparent: true, opacity: 0.7});
+            if(type === 8) return new THREE.MeshStandardMaterial({map: createPixelTexture('cobble'), roughness: 0.9});
+            if(type === 9) return new THREE.MeshStandardMaterial({map: createPixelTexture('glass'), transparent: true, depthWrite: false});
+            if(type === 10) return new THREE.MeshStandardMaterial({map: createPixelTexture('stonebrick'), roughness: 0.8});
+            if(type === 11) return [new THREE.MeshStandardMaterial({map: createPixelTexture('workbench_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('workbench_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('workbench_top'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('workbench_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('workbench_side'), roughness: 0.9})];
+            if(type === 12) return new THREE.MeshStandardMaterial({map: createPixelTexture('log_side'), roughness: 0.9});
+            if(type === 13) return [new THREE.MeshStandardMaterial({map: createPixelTexture('cobble'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('cobble'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('cobble'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('cobble'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('furnace_front'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('cobble'), roughness: 0.9})];
+            if(type === 14) return new THREE.MeshStandardMaterial({map: createPixelTexture('sand'), roughness: 1});
+            if(type === 15) return new THREE.MeshStandardMaterial({map: createPixelTexture('cobble'), roughness: 0.9});
+            if(type === 16) return [new THREE.MeshStandardMaterial({map: createPixelTexture('sandstone_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('sandstone_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('sand'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('sand'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('sandstone_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('sandstone_side'), roughness: 0.9})];
+            if(type === 17) return [new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('chest_front'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9})];
+            if(type === 18) return new THREE.MeshStandardMaterial({map: createPixelTexture('brick'), roughness: 0.8});
+            if(type === 19) return [new THREE.MeshStandardMaterial({map: createPixelTexture('bookshelf_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('bookshelf_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('bookshelf_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('bookshelf_side'), roughness: 0.9})];
+            if(type === 22) return [new THREE.MeshStandardMaterial({map: createPixelTexture('bed_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('bed_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('bed_top'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('planks'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('bed_side'), roughness: 0.9}), new THREE.MeshStandardMaterial({map: createPixelTexture('bed_side'), roughness: 0.9})];
+            if(type === 23) return new THREE.MeshStandardMaterial({map: createPixelTexture('door'), transparent: true, alphaTest: 0.5, side: THREE.DoubleSide});
         }
 
         function initBlocks() {
             const blockGeo = new THREE.BoxGeometry(1, 1, 1);
-            const blockTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+            const blockTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 22, 23];
             for(let i=0; i<blockTypes.length; i++) {
                 let type = blockTypes[i];
                 let mat = getMaterial(type);
                 let imesh = new THREE.InstancedMesh(blockGeo, mat, MAX_BLOCKS);
-                imesh.count = 0; imesh.castShadow = (type!==7 && type!==9); imesh.receiveShadow = true;
+                imesh.count = 0; imesh.castShadow = (type!==7 && type!==9 && type!==5 && type!==23); imesh.receiveShadow = true;
                 scene.add(imesh); instancedMeshes[type] = imesh; blockIndexToKey[type] = [];
             }
         }
@@ -415,7 +556,14 @@
                 blockData.get(lastKey).index = index; blockIndexToKey[type][index] = lastKey;
             }
             mesh.count--; mesh.instanceMatrix.needsUpdate = true; blockData.delete(key);
+            
             if (triggerNet) { worldMods[key] = { action: 'break' }; sendNetData({ type: 'block', action: 'break', x, y, z }); }
+            
+            if (type === 3) return 8; 
+            if (type === 15) return 110; 
+            if (type === 5) return Math.random() < 0.1 ? 109 : 0; 
+            if (type === 9 || type === 23) return 0; // Стекло и дверь (пока) ломаются
+            
             return type;
         }
 
@@ -431,26 +579,89 @@
             }
         }
 
+        function spawnTree(x, y, z) {
+            for(let i=0; i<4; i++) addBlock(x, y+i, z, 4, false); 
+            for(let dx=-2; dx<=2; dx++) for(let dz=-2; dz<=2; dz++) for(let dy=3; dy<=5; dy++) 
+                if (Math.abs(dx)+Math.abs(dz) < 4) addBlock(x+dx, y+dy, z+dz, 5, false); 
+        }
+
+        // ================= СТРУКТУРЫ =================
+        function buildPyramid(cx, cy, cz) {
+            for(let r=4; r>=0; r--) {
+                let y = cy + (4-r);
+                for(let dx=-r; dx<=r; dx++) {
+                    for(let dz=-r; dz<=r; dz++) {
+                        if (dx===0 && dz===0 && r>0) continue; // внутри пусто
+                        addBlock(cx+dx, y, cz+dz, 16, false);
+                    }
+                }
+            }
+            addBlock(cx, cy, cz, 17, false); // Сундук
+        }
+
+        function buildHouse(cx, cy, cz) {
+            for(let dx=-2; dx<=2; dx++) {
+                for(let dz=-2; dz<=2; dz++) {
+                    for(let dy=0; dy<4; dy++) {
+                        if (dy===0) addBlock(cx+dx, cy+dy, cz+dz, 8, false); // пол
+                        else if (dy===3) addBlock(cx+dx, cy+dy, cz+dz, 6, false); // крыша
+                        else if (Math.abs(dx)===2 || Math.abs(dz)===2) {
+                            if (dy===1 && dx===0 && dz===2) continue; // проем двери
+                            if (dy===2 && dx===0 && dz===-2) addBlock(cx+dx, cy+dy, cz+dz, 9, false); // окно
+                            else addBlock(cx+dx, cy+dy, cz+dz, 4, false); // стены
+                        }
+                    }
+                }
+            }
+            addBlock(cx, cy+1, cz, 11, false); // Верстак
+            addBlock(cx+1, cy+1, cz, 13, false); // Печка
+            addBlock(cx-1, cy+1, cz, 22, false); // Кровать
+            addBlock(cx, cy+1, cz+2, 23, false); // Дверь
+        }
+        // ===============================================
+
         function generateChunk(cx, cz) {
             let key = `${cx},${cz}`; if (chunks.has(key)) return; chunks.set(key, true);
+            let hasStructure = false;
+
+            // Шанс структуры в чанке
+            let structX = -1, structZ = -1, structType = 0;
+            if (Math.random() < 0.2) {
+                structX = Math.floor(Math.random() * 10) + 3; // 3-12 внутри чанка
+                structZ = Math.floor(Math.random() * 10) + 3;
+                structType = 1;
+            }
+
             for (let x = 0; x < CHUNK_SIZE; x++) {
                 for (let z = 0; z < CHUNK_SIZE; z++) {
                     let wx = cx * CHUNK_SIZE + x, wz = cz * CHUNK_SIZE + z;
                     let h = Math.floor(simplex.noise2D(wx / 40, wz / 40) * 8) + 15; 
+                    let biomeNoise = simplex.noise2D(wx / 150, wz / 150); // > 0.4 пустыня
+                    
+                    if (x === structX && z === structZ && h > WATER_LEVEL && !hasStructure) {
+                        hasStructure = true;
+                        if (biomeNoise > 0.4) buildPyramid(wx, h+1, wz);
+                        else buildHouse(wx, h+1, wz);
+                    }
+
                     for (let y = 0; y <= Math.max(h, WATER_LEVEL); y++) {
                         let bKey = `${wx},${y},${wz}`;
-                        if (blockData.has(bKey)) continue;
+                        if (blockData.has(bKey)) continue; // НЕ затираем структуры
                         if (worldMods[bKey] && worldMods[bKey].action === 'break') continue;
                         if (worldMods[bKey] && worldMods[bKey].action === 'place') { addBlock(wx, y, wz, worldMods[bKey].type); continue; }
                         
+                        if (y < h - 2 && y > 2 && simplex3D.noise3D(wx/15, y/15, wz/15) > 0.4) continue; 
                         let type = 3; 
-                        if (y === h && y >= WATER_LEVEL) type = 1; 
-                        else if (y < h && y > h - 4) type = 2; 
-                        else if (y < h - 4 && Math.random() < 0.02) type = 20; // Золотая руда
-                        else if (y < h - 6 && Math.random() < 0.01) type = 21; // Алмазная руда
+                        
+                        if (y === h && y >= WATER_LEVEL) type = biomeNoise > 0.4 ? 14 : 1; // Песок или трава
+                        else if (y < h && y > h - 4) type = biomeNoise > 0.4 ? 16 : 2; // Песчаник или земля
+                        else if (y > h && y <= WATER_LEVEL) type = 7; // Вода
+                        else if (y < h - 4 && Math.random() < 0.03) type = 8; // Случайный булыжник в камне
                         
                         addBlock(wx, y, wz, type);
                     }
+                    if (h >= WATER_LEVEL && Math.random() < 0.01 && biomeNoise <= 0.4 && !worldMods[`${wx},${h+1},${wz}`]) spawnTree(wx, h+1, wz);
+                    if (isHost && h >= WATER_LEVEL && Math.random() < 0.005 && mobs.length < 20) spawnMob(wx, h+1, wz, Math.random() > 0.5 ? 1 : 2);
                 }
             }
         }
@@ -464,28 +675,42 @@
                     }
                 }
             }
+            for (let [cKey, bArr] of chunkBlocks.entries()) {
+                let [cx, cz] = cKey.split(',').map(Number);
+                if (Math.abs(cx - px) > VIEW_DISTANCE + 1 || Math.abs(cz - pz) > VIEW_DISTANCE + 1) {
+                    bArr.forEach(bKey => { let [bx, by, bz] = bKey.split(',').map(Number); removeBlock(bx, by, bz, false); });
+                    chunkBlocks.delete(cKey); chunks.delete(cKey);
+                }
+            }
         }
 
         function spawnDrop(x, y, z, id, count=1) {
-            if (!id) return;
-            let mesh = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), new THREE.MeshStandardMaterial({color: blockColors[id]||0xffffff}));
-            mesh.position.set(x, y, z); scene.add(mesh);
+            if (!id || id===7 || id===9 || id===23) return; // Стекло и двери не дропаются
+            let color = blockColors[id] || 0xffffff;
+            if(id===102) color=0xffaaaa; if(id===103) color=0xeeeeee; if(id===109) color=0xff3333;
+            
+            let mesh = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), new THREE.MeshStandardMaterial({color: color, roughness:0.8}));
+            mesh.position.set(x, y, z); mesh.castShadow = true; scene.add(mesh);
             drops.push({ mesh: mesh, id: id, count: count, ry: 0 });
         }
 
         function spawnMob(x, y, z, type=1) { 
-            let mesh = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({color: 0xeeeeee}));
-            mesh.position.set(x, y, z); scene.add(mesh);
-            mobs.push({ id: Math.random().toString(36).substr(2, 9), mesh: mesh, vx: 0, vy: 0, vz: 0, hp: 5, rx: x, ry: y, rz: z, nextMove: 0 });
+            let color = type === 1 ? 0xeeeeee : 0xffaadd;
+            let mesh = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), new THREE.MeshStandardMaterial({color: color}));
+            mesh.position.set(x, y, z); mesh.castShadow = true; scene.add(mesh);
+            let mob = { id: Math.random().toString(36).substr(2, 9), mesh: mesh, type: type, vx: 0, vy: 0, vz: 0, hp: 5, rx: x, ry: y, rz: z, nextMove: 0 };
+            mobs.push(mob);
+            if(isHost) sendNetData({ type: 'mob_spawn', mob: { id: mob.id, x, y, z, type } });
         }
         function updateMobs() { 
             let now = performance.now();
             for(let i = mobs.length - 1; i >= 0; i--) {
-                let m = mobs[i];
-                if (now > m.nextMove) {
-                    let angle = Math.random() * Math.PI * 2;
-                    m.vx = Math.cos(angle) * 1.5; m.vz = Math.sin(angle) * 1.5;
-                    m.nextMove = now + 1500;
+                let mob = mobs[i];
+                if (now > mob.nextMove) {
+                    let angle = Math.random() * Math.PI * 2, speed = Math.random() > 0.4 ? 1.5 : 0;
+                    mob.vx = Math.cos(angle) * speed; mob.vz = Math.sin(angle) * speed;
+                    if(Math.random() > 0.7 && blockData.has(`${Math.round(mob.rx)},${Math.round(mob.ry-1)},${Math.round(mob.rz)}`)) mob.vy = 5;
+                    mob.nextMove = now + 1000 + Math.random() * 2000;
                 }
             }
         }
@@ -505,193 +730,214 @@
             else { invMode = 'all'; btn.innerText = 'Режим: ВСЁ'; btn.style.color = '#55ff55'; }
         }
 
-        // ================= ДИНАМИЧЕСКИЙ UI ИНВЕНТАРЯ / ВЕРСТАКА / ПЕЧИ / СУНДУКА =================
         function buildInventoryHTML() {
             let main = document.getElementById('inv-main'), hb = document.getElementById('inv-hotbar'), hudHb = document.getElementById('hotbar');
-            main.innerHTML = ''; hb.innerHTML = ''; hudHb.innerHTML = '';
+            let cGrid = document.getElementById('craft-grid-ui');
+            main.innerHTML = ''; hb.innerHTML = ''; hudHb.innerHTML = ''; cGrid.innerHTML = '';
             
             for(let i=0; i<3; i++) {
                 let row = document.createElement('div'); row.className = 'inv-row';
-                for(let j=0; j<9; j++) row.innerHTML += `<div class="slot inv-slot" data-type="main" data-idx="${i*9 + j}"></div>`;
+                for(let j=0; j<9; j++) { let idx = i*9 + j; row.innerHTML += `<div class="slot inv-slot" data-type="main" data-idx="${idx}"></div>`; }
                 main.appendChild(row);
             }
             for(let i=0; i<9; i++) {
                 hb.innerHTML += `<div class="slot inv-slot" data-type="hotbar" data-idx="${i}"></div>`;
+                // ЖЕСТКАЯ ПРИВЯЗКА КЛИКА ЧТОБЫ РАБОТАЛО ДАЖЕ ЕСЛИ ЕСТЬ OVERLAY
                 hudHb.innerHTML += `<div class="slot" id="hud-slot-${i}" onpointerdown="event.preventDefault(); selectHotbarSlot(${i});"></div>`;
+                cGrid.innerHTML += `<div class="slot inv-slot" data-type="craft" data-idx="${i}" id="craft-slot-${i}"></div>`;
             } selectHotbarSlot(0);
-        }
-
-        function setUIContainerMode(mode, chestKey = null) {
-            currentCraftMode = mode;
-            activeChestKey = chestKey;
-            let dynamicPanel = document.getElementById('ui-dynamic-panel');
-            let titleEl = document.getElementById('inv-title');
-            dynamicPanel.innerHTML = '';
-
-            if (mode === 'inv') {
-                titleEl.innerText = "Инвентарь";
-                dynamicPanel.innerHTML = `
-                    <div class="crafting-area">
-                        <div class="craft-grid" id="craft-grid-inv" style="grid-template-columns: repeat(2, 1fr);"></div>
-                        <div class="arrow">➔</div>
-                        <div class="slot inv-slot" data-type="craftOut" data-idx="0" style="width:40px; height:40px; background:#888;"></div>
-                    </div>`;
-            } else if (mode === 'workbench') {
-                titleEl.innerText = "Верстак";
-                dynamicPanel.innerHTML = `
-                    <div class="crafting-area">
-                        <div class="craft-grid" id="craft-grid-workbench" style="grid-template-columns: repeat(3, 1fr);"></div>
-                        <div class="arrow">➔</div>
-                        <div class="slot inv-slot" data-type="craftOut" data-idx="0" style="width:40px; height:40px; background:#888;"></div>
-                    </div>`;
-            } else if (mode === 'furnace') {
-                titleEl.innerText = "Печь";
-                dynamicPanel.innerHTML = `
-                    <div class="crafting-area" style="gap:15px;">
-                        <div style="display:flex; flex-direction:column; gap:4px;">
-                            <div class="slot inv-slot" data-type="furnaceIn" data-idx="0" title="Руда"></div>
-                            <div class="slot inv-slot" data-type="furnaceFuel" data-idx="0" title="Топливо">🔥</div>
-                        </div>
-                        <div class="arrow">🔥➔</div>
-                        <div class="slot inv-slot" data-type="furnaceOut" data-idx="0" style="background:#55ff55;"></div>
-                    </div>`;
-            } else if (mode === 'chest') {
-                titleEl.innerText = "Сундук";
-                let chestHtml = '<div style="display:grid; grid-template-columns: repeat(9, 1fr); gap:2px; margin-bottom:6px;">';
-                for(let i=0; i<18; i++) chestHtml += `<div class="slot inv-slot" data-type="chest" data-idx="${i}"></div>`;
-                chestHtml += '</div>';
-                dynamicPanel.innerHTML = chestHtml;
-            }
-
-            // Перепривязка событий к новым слотам
+            
             document.querySelectorAll('.inv-slot').forEach(slot => {
                 slot.addEventListener('mousedown', (e) => handleInvClick(e, slot));
                 slot.addEventListener('touchstart', (e) => { e.preventDefault(); handleInvClick(e, slot); });
                 slot.addEventListener('mouseenter', () => hoveredSlot = { type: slot.dataset.type, idx: parseInt(slot.dataset.idx) });
                 slot.addEventListener('mouseleave', () => hoveredSlot = null);
             });
-            renderInventory();
+        }
+
+        function setCraftMode(mode) {
+            currentCraftMode = mode;
+            let cGrid = document.getElementById('craft-grid-ui');
+            document.getElementById('inv-title').innerText = mode === 'inv' ? "Инвентарь" : "Верстак";
+            
+            if(mode === 'inv') {
+                cGrid.style.gridTemplateColumns = '1fr 1fr';
+                for(let i=0; i<9; i++) {
+                    let el = document.getElementById(`craft-slot-${i}`);
+                    if([2, 5, 6, 7, 8].includes(i)) el.style.display = 'none';
+                    else el.style.display = 'flex';
+                }
+            } else {
+                cGrid.style.gridTemplateColumns = '1fr 1fr 1fr';
+                for(let i=0; i<9; i++) document.getElementById(`craft-slot-${i}`).style.display = 'flex';
+            }
         }
 
         function renderInventory() {
             const drawSlot = (el, item) => {
                 if(item) {
-                    el.innerHTML = `<div class="item-icon icon-${item.id}"></div><div class="item-count">${item.count>1?item.count:''}</div>`;
+                    let typeClass = '';
+                    if([101,104,105].includes(item.id)) typeClass = 'pickaxe';
+                    if([106,107,108].includes(item.id)) typeClass = 'sword';
+                    if([111,112,113].includes(item.id)) typeClass = 'axe';
+                    if([114,115,116].includes(item.id)) typeClass = 'shovel';
+                    
+                    let cCls = `item-icon icon-${item.id} ${typeClass}`;
+                    el.innerHTML = `<div class="${cCls}"></div><div class="item-count">${item.count>1?item.count:''}</div>`;
                 } else el.innerHTML = '';
             };
             document.querySelectorAll('.inv-slot').forEach(el => {
                 let type = el.dataset.type, idx = parseInt(el.dataset.idx);
-                if(type === 'main') drawSlot(el, inventory[idx]); 
-                else if(type === 'hotbar') drawSlot(el, hotbar[idx]);
-                else if(type === 'craft') drawSlot(el, craftGrid[idx]); 
-                else if(type === 'craftOut') drawSlot(el, craftResult);
-                else if(type === 'furnaceIn') drawSlot(el, furnaceInput);
-                else if(type === 'furnaceFuel') drawSlot(el, furnaceFuel);
-                else if(type === 'furnaceOut') drawSlot(el, furnaceOutput);
-                else if(type === 'chest') drawSlot(el, chestGrid[idx]);
+                if(type === 'main') drawSlot(el, inventory[idx]); if(type === 'hotbar') drawSlot(el, hotbar[idx]);
+                if(type === 'craft') drawSlot(el, craftGrid[idx]); if(type === 'craftOut') drawSlot(el, craftResult);
             });
             for(let i=0; i<9; i++) drawSlot(document.getElementById(`hud-slot-${i}`), hotbar[i]);
 
             let cursorEl = document.getElementById('cursor-item');
             if(cursorItem) {
-                cursorEl.style.display = 'block';
-                document.getElementById('cursor-icon').className = `item-icon icon-${cursorItem.id}`;
+                cursorEl.style.display = 'block'; 
+                let typeClass = '';
+                if([101,104,105].includes(cursorItem.id)) typeClass = 'pickaxe';
+                if([106,107,108].includes(cursorItem.id)) typeClass = 'sword';
+                if([111,112,113].includes(cursorItem.id)) typeClass = 'axe';
+                if([114,115,116].includes(cursorItem.id)) typeClass = 'shovel';
+                document.getElementById('cursor-icon').className = `item-icon icon-${cursorItem.id} ${typeClass}`;
                 document.getElementById('cursor-count').innerText = cursorItem.count > 1 ? cursorItem.count : '';
             } else cursorEl.style.display = 'none';
         }
 
-        function checkCrafting() {
-            craftResult = null;
-            let cols = currentCraftMode === 'workbench' ? 3 : 2;
+        function getCraftString(arr, cols) {
             let minX = cols, maxX = -1, minY = cols, maxY = -1;
-            for(let i=0; i<9; i++) {
-                if(craftGrid[i]) {
-                    let x = i % 3, y = Math.floor(i / 3);
+            for(let i=0; i<arr.length; i++) {
+                if(arr[i]) {
+                    let x = i % cols, y = Math.floor(i / cols);
                     if(x < minX) minX = x; if(x > maxX) maxX = x;
                     if(y < minY) minY = y; if(y > maxY) maxY = y;
                 }
             }
-            if(maxX === -1) return;
-            let resStr = [];
+            if(maxX === -1) return {str: "", w: 0, h: 0, minX, maxX, minY, maxY};
+            let res = [];
             for(let y = minY; y <= maxY; y++) {
-                for(let x = minX; x <= maxX; x++) resStr.push(craftGrid[y*3 + x] ? craftGrid[y*3 + x].id : 0);
-                resStr.push('|');
+                for(let x = minX; x <= maxX; x++) res.push(arr[y*cols + x] ? arr[y*cols + x].id : 0);
+                res.push('|');
             }
-            let str = resStr.join(',');
-            for (let r of RECIPES) { if (r.in === str) { craftResult = { id: r.out.id, count: r.out.count }; break; } }
+            return { str: res.join(','), w: maxX-minX+1, h: maxY-minY+1, minX, maxX, minY, maxY };
+        }
+
+        function checkCrafting() {
+            craftResult = null;
+            let p = getCraftString(craftGrid, 3);
+            if(p.str === "") return;
+            if(currentCraftMode === 'inv' && (p.w > 2 || p.h > 2)) return;
+            
+            for (let r of RECIPES) {
+                if (r.in === p.str) { craftResult = { id: r.out.id, count: r.out.count }; break; }
+            }
         }
 
         function handleInvClick(e, slotEl) {
             let type = slotEl.dataset.type, idx = parseInt(slotEl.dataset.idx);
-            let targetArr = type==='main' ? inventory : (type==='hotbar' ? hotbar : (type==='craft' ? craftGrid : (type==='chest' ? chestGrid : null)));
+            let targetArr = type==='main' ? inventory : (type==='hotbar' ? hotbar : (type==='craft' ? craftGrid : null));
+            let currentMode = (e.button === 2) ? 'half' : invMode;
             
             if (type === 'craftOut' && craftResult) {
                 if (!cursorItem || (cursorItem.id === craftResult.id && cursorItem.count + craftResult.count <= 64)) {
+                    playSound('step');
                     if(!cursorItem) cursorItem = { id: craftResult.id, count: craftResult.count }; else cursorItem.count += craftResult.count;
-                    for(let i=0; i<9; i++) if(craftGrid[i]) { craftGrid[i].count--; if(craftGrid[i].count<=0) craftGrid[i]=null; }
+                    
+                    let p = getCraftString(craftGrid, 3);
+                    for(let y = p.minY; y <= p.maxY; y++) {
+                        for(let x = p.minX; x <= p.maxX; x++) {
+                            let i = y*3 + x;
+                            if(craftGrid[i]) { craftGrid[i].count--; if(craftGrid[i].count<=0) craftGrid[i]=null; }
+                        }
+                    }
                     checkCrafting(); renderInventory();
                 } return;
             }
-            if (type === 'furnaceOut' && furnaceOutput) {
-                if (!cursorItem || (cursorItem.id === furnaceOutput.id && cursorItem.count + furnaceOutput.count <= 64)) {
-                    if(!cursorItem) cursorItem = furnaceOutput; else cursorItem.count += furnaceOutput.count;
-                    furnaceOutput = null; renderInventory();
-                } return;
-            }
-            if(type === 'furnaceIn') { targetArr = [furnaceInput]; idx = 0; }
-            if(type === 'furnaceFuel') { targetArr = [furnaceFuel]; idx = 0; }
-
             if (!targetArr) return;
             let clickedItem = targetArr[idx];
 
             if (cursorItem) {
-                if (!clickedItem) { targetArr[idx] = cursorItem; cursorItem = null; }
-                else if (clickedItem.id === cursorItem.id) {
-                    let space = 64 - clickedItem.count, toAdd = Math.min(space, cursorItem.count);
-                    clickedItem.count += toAdd; cursorItem.count -= toAdd; if(cursorItem.count <= 0) cursorItem = null;
-                } else { targetArr[idx] = cursorItem; cursorItem = clickedItem; }
+                if (!clickedItem) {
+                    if (currentMode === 'one') { targetArr[idx] = { id: cursorItem.id, count: 1 }; cursorItem.count--; if(cursorItem.count <= 0) cursorItem = null; }
+                    else { targetArr[idx] = cursorItem; cursorItem = null; }
+                } else if (clickedItem.id === cursorItem.id) {
+                    if (currentMode === 'one') { if(clickedItem.count < 64) { clickedItem.count++; cursorItem.count--; if(cursorItem.count<=0) cursorItem = null; } }
+                    else { let space = 64 - clickedItem.count, toAdd = Math.min(space, cursorItem.count); clickedItem.count += toAdd; cursorItem.count -= toAdd; if(cursorItem.count <= 0) cursorItem = null; }
+                } else { if(currentMode === 'all') { targetArr[idx] = cursorItem; cursorItem = clickedItem; } }
             } else if (clickedItem) {
-                cursorItem = clickedItem; targetArr[idx] = null;
+                if (currentMode === 'half') { let half = Math.ceil(clickedItem.count / 2); cursorItem = { id: clickedItem.id, count: half }; clickedItem.count -= half; if(clickedItem.count <= 0) targetArr[idx] = null; }
+                else if (currentMode === 'one') { cursorItem = { id: clickedItem.id, count: 1 }; clickedItem.count--; if(clickedItem.count <= 0) targetArr[idx] = null; }
+                else { cursorItem = clickedItem; targetArr[idx] = null; }
             }
-            if(type === 'furnaceIn' || type === 'furnaceFuel') { furnaceInput = targetArr=== [furnaceInput]? targetArr[0]:furnaceInput; }
-            if(type === 'craft') checkCrafting();
-            renderInventory();
+            if(type === 'craft') checkCrafting(); renderInventory();
         }
 
         function selectHotbarSlot(idx) { 
             activeHotbarSlot = idx; 
             for(let i=0; i<9; i++) document.getElementById(`hud-slot-${i}`).classList.remove('active'); 
             document.getElementById(`hud-slot-${idx}`).classList.add('active'); 
+            handAnim = 1.0; 
         }
         
         function giveItem(id, count) {
+            playSound('step');
+            for(let i=0; i<HOTBAR_SIZE; i++) { if(hotbar[i] && hotbar[i].id === id && hotbar[i].count < 64) { let s = 64 - hotbar[i].count, add = Math.min(s, count); hotbar[i].count += add; count -= add; if(count<=0){ renderInventory(); return;} } }
+            for(let i=0; i<INV_SIZE; i++) { if(inventory[i] && inventory[i].id === id && inventory[i].count < 64) { let s = 64 - inventory[i].count, add = Math.min(s, count); inventory[i].count += add; count -= add; if(count<=0){ renderInventory(); return;} } }
             for(let i=0; i<HOTBAR_SIZE; i++) { if(!hotbar[i]) { hotbar[i] = {id, count}; renderInventory(); return; } }
+            for(let i=0; i<INV_SIZE; i++) { if(!inventory[i]) { inventory[i] = {id, count}; renderInventory(); return; } }
         }
 
         function saveWorld() {
             localStorage.setItem('webcraft_world', JSON.stringify(worldMods));
-            document.getElementById('status').innerText = "Сохранено!";
+            localStorage.setItem('webcraft_inv', JSON.stringify({hotbar, inventory}));
+            document.getElementById('status').innerText = "Игра сохранена!";
         }
         function loadWorld() {
-            let wm = localStorage.getItem('webcraft_world'); if(wm) worldMods = JSON.parse(wm);
-            document.getElementById('status').innerText = "Загружено!";
+            let wm = localStorage.getItem('webcraft_world'), inv = localStorage.getItem('webcraft_inv');
+            if(wm) worldMods = JSON.parse(wm);
+            if(inv) { let i = JSON.parse(inv); hotbar = i.hotbar; inventory = i.inventory; }
+            document.getElementById('status').innerText = "Игра загружена!";
         }
 
         function updateHUD() {
             let hc = document.getElementById('hearts-container'); hc.innerHTML = '';
             for(let i = 0; i < 10; i++) hc.innerHTML += `<div class="stat-icon">${i < health ? '❤️' : '🖤'}</div>`;
+            
             let hgc = document.getElementById('hunger-container'); hgc.innerHTML = '';
-            for(let i = 0; i < 10; i++) hgc.innerHTML += `<div class="stat-icon" style="filter: ${i < hunger ? 'none' : 'grayscale(100%)'};">🍖</div>`;
+            for(let i = 0; i < 10; i++) hgc.innerHTML += `<div class="stat-icon" style="filter: ${i < hunger ? 'none' : 'grayscale(100%) opacity(50%)'};">🍖</div>`;
         }
         
         function takeDamage(amount) {
-            health = Math.max(0, health - amount); updateHUD();
-            if(health <= 0) { isDead = true; document.exitPointerLock(); document.getElementById('death-screen').style.display = 'flex'; document.getElementById('ui-layer').style.display = 'none'; document.getElementById('hotbar').style.display = 'none'; }
+            if(isDead) return; 
+            health = Math.max(0, health - amount); 
+            updateHUD(); 
+            camera.position.y -= 0.3; 
+            playSound('hit');
+            if(health <= 0) { 
+                isDead = true; document.exitPointerLock(); 
+                document.getElementById('death-screen').style.display = 'flex'; 
+                document.getElementById('ui-layer').style.display = 'none'; 
+                document.getElementById('hotbar').style.display = 'none';
+            }
         }
+        
         function respawnPlayer() {
-            isDead = false; health = 10; hunger = 10; camera.position.set(8, 25, 8);
-            updateHUD(); document.getElementById('death-screen').style.display = 'none'; document.getElementById('ui-layer').style.display = 'block'; document.getElementById('hotbar').style.display = 'flex';
-            if(!isMobile) document.body.requestPointerLock();
+            isDead = false; health = 10; hunger = 10; hungerExhaustion = 0; camera.position.set(8, 35, 8); velocity.set(0,0,0);
+            updateHUD(); document.getElementById('death-screen').style.display = 'none'; 
+            document.getElementById('ui-layer').style.display = 'block'; document.getElementById('hotbar').style.display = 'flex';
+            if(!isMobile && gameStarted) document.body.requestPointerLock();
+        }
+
+        function getCollisions(pos) {
+            let minX = Math.round(pos.x - 0.25), maxX = Math.round(pos.x + 0.25), minY = Math.round(pos.y - 1.6), maxY = Math.round(pos.y + 0.1), minZ = Math.round(pos.z - 0.25), maxZ = Math.round(pos.z + 0.25);
+            inWater = false;
+            for (let x = minX; x <= maxX; x++) for (let y = minY; y <= maxY; y++) for (let z = minZ; z <= maxZ; z++) {
+                let b = blockData.get(`${x},${y},${z}`);
+                if (b) { if(b.type === 7) inWater = true; else if(b.type !== 9 && b.type !== 23) return true; } // Сквозь двери и стекло нельзя ходить в этой версии, пусть будут твердыми (убрано из исключений)
+            }
+            return false;
         }
 
         function getRaycastHit() {
@@ -700,8 +946,14 @@
             while (dist < 6) {
                 pos.addScaledVector(dir, step); dist += step;
                 let bx = Math.round(pos.x), by = Math.round(pos.y), bz = Math.round(pos.z);
+                
+                for(let [otherId, pMesh] of otherPlayers) {
+                    let center = pMesh.position.clone().add(new THREE.Vector3(0, 0.9, 0));
+                    if (center.distanceTo(pos) < 1.2) return { type: 'player', peerId: otherId };
+                }
+                for(let m of mobs) if(Math.abs(m.mesh.position.x - pos.x)<0.7 && Math.abs(m.mesh.position.y - pos.y)<0.7 && Math.abs(m.mesh.position.z - pos.z)<0.7) return { type: 'mob', mob: m };
                 let b = blockData.get(`${bx},${by},${bz}`);
-                if (b) return { type: 'block', key: `${bx},${by},${bz}`, bx, by, bz, blockType: b.type, lastPos }; 
+                if (b && b.type !== 7) return { type: 'block', key: `${bx},${by},${bz}`, bx, by, bz, blockType: b.type, lastPos }; 
                 lastPos = { x: bx, by: by, bz: bz };
             }
             return null;
@@ -709,41 +961,57 @@
 
         function processAction(isRightClick) {
             if(isDead || isInvOpen) return;
+            handAnim = 1.0; 
             let hit = getRaycastHit(); 
             let activeItem = hotbar[activeHotbarSlot];
 
             if(isRightClick) {
                 if (hit && hit.type === 'block') {
                     if (hit.blockType === 11) { openInventory('workbench'); return; }
-                    if (hit.blockType === 13) { openInventory('furnace'); return; }
-                    if (hit.blockType === 17) { 
-                        let key = hit.key;
-                        if(!chestStorage[key]) chestStorage[key] = new Array(18).fill(null);
-                        chestGrid = chestStorage[key];
-                        openInventory('chest', key); 
-                        return; 
+                    if (hit.blockType === 17) { openInventory('chest'); return; }
+                }
+                
+                if (activeItem && (activeItem.id === 102 || activeItem.id === 109)) { 
+                    if (hunger < 10 || health < 10) { 
+                        hunger = Math.min(10, hunger + (activeItem.id===109 ? 2 : 4)); 
+                        health = Math.min(10, health + (activeItem.id===109 ? 1 : 2)); 
+                        activeItem.count--; if(activeItem.count <= 0) hotbar[activeHotbarSlot] = null; 
+                        updateHUD(); renderInventory(); playSound('eat'); 
+                        return;
                     }
                 }
+
                 if(hit && hit.type === 'block' && hit.lastPos && activeItem && activeItem.id < 100) { 
                     addBlock(hit.lastPos.x, hit.lastPos.by, hit.lastPos.bz, activeItem.id, true);
                     activeItem.count--; if(activeItem.count <= 0) hotbar[activeHotbarSlot] = null;
-                    renderInventory();
+                    renderInventory(); playSound('step');
                 }
             } else {
                 if(!hit) return;
-                playSound('break');
-                let dropped = removeBlock(hit.bx, hit.by, hit.bz, true);
-                spawnDrop(hit.bx, hit.by, hit.bz, dropped);
+                let toolId = activeItem ? activeItem.id : 0;
+                let dmg = getWeaponDamage(toolId);
+                if(hit.type === 'mob') {
+                    hit.mob.hp -= dmg; hit.mob.vy = 4; hit.mob.vx = (hit.mob.rx - camera.position.x)*3; hit.mob.vz = (hit.mob.rz - camera.position.z)*3;
+                    playSound('hit');
+                    if(hit.mob.hp <= 0) {
+                        scene.remove(hit.mob.mesh); mobs = mobs.filter(m => m !== hit.mob);
+                        spawnDrop(hit.mob.rx, hit.mob.ry, hit.mob.rz, hit.mob.type===1 ? 103 : 102, 1); 
+                        if(isHost) sendNetData({type: 'mob_die', id: hit.mob.id});
+                    }
+                    isMining = false; miningBlock = null;
+                } else if(hit.type === 'player') {
+                    sendNetData({ type: 'pvp_hit', targetId: hit.peerId, damage: dmg }); playSound('hit');
+                    isMining = false; miningBlock = null;
+                }
             }
         }
 
-        function openInventory(mode, chestKey = null) {
+        function openInventory(mode) {
             if(isDead) return; 
             isInvOpen = true;
+            setCraftMode(mode);
             document.exitPointerLock(); 
             document.getElementById('inventory-ui').style.display = 'flex';
-            document.getElementById('hotbar').style.display = 'none'; // Скрываем хотбар, чтобы он не мешал!
-            setUIContainerMode(mode, chestKey);
             if(isMobile) document.getElementById('mobile-controls').style.display = 'none';
         }
 
@@ -752,9 +1020,12 @@
             if (isInvOpen) {
                 isInvOpen = false;
                 document.getElementById('inventory-ui').style.display = 'none';
-                document.getElementById('hotbar').style.display = 'flex'; // Возвращаем хотбар
-                if(cursorItem) { giveItem(cursorItem.id, cursorItem.count); cursorItem = null; }
+                
+                if(cursorItem) { giveItem(cursorItem.id, cursorItem.count); cursorItem = null; } 
+                for(let i=0; i<9; i++) { if(craftGrid[i]) { giveItem(craftGrid[i].id, craftGrid[i].count); craftGrid[i] = null; } }
+                craftResult = null;
                 renderInventory();
+
                 if(!isMobile) document.body.requestPointerLock();
                 if(isMobile) document.getElementById('mobile-controls').style.display = 'block';
             } else {
@@ -767,149 +1038,288 @@
             document.addEventListener('contextmenu', e => e.preventDefault());
 
             document.addEventListener('wheel', (e) => {
-                if(!isInvOpen && !isDead && gameStarted) {
-                    activeHotbarSlot = (e.deltaY > 0) ? (activeHotbarSlot + 1) % 9 : (activeHotbarSlot + 8) % 9;
+                if(!isInvOpen && !isDead && gameStarted && document.getElementById('menu').style.display === 'none') {
+                    if(e.deltaY > 0) activeHotbarSlot = (activeHotbarSlot + 1) % 9;
+                    else activeHotbarSlot = (activeHotbarSlot + 8) % 9;
                     selectHotbarSlot(activeHotbarSlot);
                 }
             });
 
+            let chatInput = document.getElementById('chat-input');
             if (!isMobile) {
                 document.addEventListener('keydown', (e) => {
-                    if (e.code === 'Escape' && isInvOpen) toggleInventory();
-                    if (e.code === 'KeyE') toggleInventory();
-                    if (e.code >= 'Digit1' && e.code <= 'Digit9' && !isInvOpen) selectHotbarSlot(parseInt(e.code.replace('Digit','')) - 1);
+                    if (isDead) return;
+                    if (e.code === 'Escape') { if (isInvOpen) toggleInventory(); return; }
+                    if (e.code === 'Enter' || e.code === 'KeyT') {
+                        if (!isPointerLocked && document.activeElement === chatInput) {
+                            if (chatInput.value.trim() !== '') {
+                                let msg = chatInput.value.trim(); addChatMessage(myName, msg, "#55ff55");
+                                if (peer) sendNetData({type: 'chat', text: msg, sender: myName}); chatInput.value = '';
+                            }
+                            chatInput.style.display = 'none'; document.body.requestPointerLock();
+                        } else { document.exitPointerLock(); chatInput.style.display = 'block'; chatInput.focus(); e.preventDefault(); }
+                    }
+                    if (document.activeElement === chatInput) return;
                     if (e.code === 'KeyW') moveState.forward = 1; if (e.code === 'KeyS') moveState.forward = -1;
                     if (e.code === 'KeyA') moveState.right = -1; if (e.code === 'KeyD') moveState.right = 1;
-                    if (e.code === 'Space' && canJump) { velocity.y = 9; canJump = false; }
+                    if (e.code === 'Space' && (canJump || inWater)) { velocity.y = inWater ? 5 : 9; canJump = false; }
+                    if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') isSprinting = true;
+                    if (e.code >= 'Digit1' && e.code <= 'Digit9') {
+                        if (isInvOpen && hoveredSlot && hoveredSlot.type !== 'craft' && hoveredSlot.type !== 'craftOut') {
+                            let targetIdx = parseInt(e.key) - 1; let hoverArr = hoveredSlot.type === 'main' ? inventory : (hoveredSlot.type === 'hotbar' ? hotbar : null);
+                            if (hoverArr && (hoverArr !== hotbar || hoveredSlot.idx !== targetIdx)) {
+                                let temp = hoverArr[hoveredSlot.idx]; hoverArr[hoveredSlot.idx] = hotbar[targetIdx]; hotbar[targetIdx] = temp; renderInventory();
+                            }
+                        } else if (!isInvOpen) selectHotbarSlot(parseInt(e.key)-1);
+                    }
+                    if (e.code === 'KeyE') toggleInventory();
                 });
                 document.addEventListener('keyup', (e) => {
-                    if (e.code === 'KeyW' || e.code === 'KeyS') moveState.forward = 0;
-                    if (e.code === 'KeyA' || e.code === 'KeyD') moveState.right = 0;
+                    if (e.code === 'KeyW' || e.code === 'KeyS') moveState.forward = 0; if (e.code === 'KeyA' || e.code === 'KeyD') moveState.right = 0;
+                    if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') isSprinting = false;
                 });
                 document.addEventListener('mousedown', (e) => {
-                    if (isDead || isInvOpen || document.getElementById('menu').style.display !== 'none') return;
+                    if (isDead || document.getElementById('menu').style.display !== 'none' || isInvOpen || document.activeElement === chatInput) return;
                     if (!isPointerLocked) document.body.requestPointerLock();
-                    else processAction(e.button === 2);
+                    else { if (e.button === 0) { isMining = true; processAction(false); } if (e.button === 2) processAction(true); }
                 });
+                document.addEventListener('mouseup', (e) => { if (e.button === 0) { isMining = false; miningBlock = null; } });
                 document.addEventListener('mousemove', (e) => {
-                    if (isPointerLocked && !isDead) {
-                        euler.setFromQuaternion(camera.quaternion);
-                        euler.y -= e.movementX * 0.002; euler.x -= e.movementY * 0.002;
-                        euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
-                        camera.quaternion.setFromEuler(euler);
-                    }
+                    if (isPointerLocked && !isDead) { euler.setFromQuaternion(camera.quaternion); euler.y -= e.movementX * 0.002; euler.x -= e.movementY * 0.002; euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x)); camera.quaternion.setFromEuler(euler); }
                 });
             } else {
                 document.getElementById('mobile-controls').style.display = 'block';
                 document.getElementById('btn-inv-mobile').addEventListener('touchstart', (e)=>{ e.preventDefault(); toggleInventory(); });
-                document.getElementById('btn-mine').addEventListener('touchstart', (e) => { e.preventDefault(); processAction(false); });
-                document.getElementById('btn-place').addEventListener('touchstart', (e) => { e.preventDefault(); processAction(true); });
-                document.getElementById('btn-jump').addEventListener('touchstart', (e) => { e.preventDefault(); if(canJump) { velocity.y = 9; canJump = false; } });
+                document.getElementById('btn-mine').addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); isMining = true; processAction(false); });
+                document.getElementById('btn-mine').addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); isMining = false; miningBlock = null; });
+                document.getElementById('btn-place').addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); processAction(true); });
+                document.getElementById('btn-jump').addEventListener('touchstart', (e) => { e.preventDefault(); if (canJump || inWater) { velocity.y = inWater?5:9; canJump = false; }});
                 
-                // ИСПРАВЛЕННЫЙ ДЖОЙСТИК (Без залипаний)
+                let btnSprint = document.getElementById('btn-sprint');
+                btnSprint.addEventListener('touchstart', (e)=>{ e.preventDefault(); isSprinting=true; btnSprint.style.background='rgba(255,255,255,0.6)';});
+                btnSprint.addEventListener('touchend', (e)=>{ e.preventDefault(); isSprinting=false; btnSprint.style.background='';});
+
+                let rightTouchId = null, lastRight = {x:0, y:0};
+                document.getElementById('touch-right').addEventListener('touchstart', (e) => { e.preventDefault(); rightTouchId = e.changedTouches[0].identifier; lastRight = {x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY}; });
+                document.getElementById('touch-right').addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    for(let i=0; i<e.changedTouches.length; i++) {
+                        if(e.changedTouches[i].identifier === rightTouchId && !isDead && !isInvOpen) {
+                            let dx = e.changedTouches[i].clientX - lastRight.x, dy = e.changedTouches[i].clientY - lastRight.y;
+                            euler.setFromQuaternion(camera.quaternion); euler.y -= dx * 0.005; euler.x -= dy * 0.005; euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x)); camera.quaternion.setFromEuler(euler);
+                            lastRight = {x: e.changedTouches[i].clientX, y: e.changedTouches[i].clientY};
+                        }
+                    }
+                });
+                document.getElementById('touch-right').addEventListener('touchend', (e) => { e.preventDefault(); for(let i=0; i<e.changedTouches.length; i++) if(e.changedTouches[i].identifier === rightTouchId) rightTouchId = null; });
+                
                 const joyBase = document.getElementById('joystick-base'), joyKnob = document.getElementById('joystick-knob');
                 let leftTouchId = null, joyCenter = {x:0, y:0};
                 document.getElementById('touch-left').addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    let t = e.changedTouches[0];
-                    leftTouchId = t.identifier;
-                    joyBase.style.display = 'flex';
-                    joyBase.style.left = (t.clientX - 55) + 'px'; joyBase.style.top = (t.clientY - 55) + 'px';
-                    joyCenter = { x: t.clientX, y: t.clientY };
+                    e.preventDefault(); leftTouchId = e.changedTouches[0].identifier;
+                    joyBase.style.display = 'flex'; joyBase.style.left = (e.changedTouches[0].clientX - 55) + 'px'; joyBase.style.top = (e.changedTouches[0].clientY - 55) + 'px'; joyCenter = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
                 });
                 document.getElementById('touch-left').addEventListener('touchmove', (e) => {
                     e.preventDefault();
                     for(let i=0; i<e.changedTouches.length; i++) {
-                        let t = e.changedTouches[i];
-                        if(t.identifier === leftTouchId) {
-                            let dx = t.clientX - joyCenter.x, dy = t.clientY - joyCenter.y;
+                        if(e.changedTouches[i].identifier === leftTouchId) {
+                            let dx = e.changedTouches[i].clientX - joyCenter.x, dy = e.changedTouches[i].clientY - joyCenter.y;
                             let dist = Math.min(45, Math.sqrt(dx*dx + dy*dy)), angle = Math.atan2(dy, dx);
                             joyKnob.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
-                            moveState.right = Math.max(-1, Math.min(1, dx / 40));
-                            moveState.forward = Math.max(-1, Math.min(1, -dy / 40));
+                            moveState.right = Math.max(-1, Math.min(1, dx / 40)); moveState.forward = Math.max(-1, Math.min(1, -dy / 40)); 
                         }
                     }
                 });
-                const endLeftJoy = (e) => {
-                    e.preventDefault();
-                    for(let i=0; i<e.changedTouches.length; i++) {
-                        if(e.changedTouches[i].identifier === leftTouchId) {
-                            leftTouchId = null; moveState.forward = 0; moveState.right = 0;
-                            joyBase.style.display = 'none'; joyKnob.style.transform = 'translate(0,0)';
-                        }
-                    }
-                };
-                document.getElementById('touch-left').addEventListener('touchend', endLeftJoy);
-                document.getElementById('touch-left').addEventListener('touchcancel', endLeftJoy);
-
-                // Поворот камеры тачем справа
-                let rightTouchId = null, lastRight = {x:0, y:0};
-                document.getElementById('touch-right').addEventListener('touchstart', (e) => { e.preventDefault(); let t = e.changedTouches[0]; rightTouchId = t.identifier; lastRight = {x: t.clientX, y: t.clientY}; });
-                document.getElementById('touch-right').addEventListener('touchmove', (e) => {
-                    e.preventDefault();
-                    for(let i=0; i<e.changedTouches.length; i++) {
-                        let t = e.changedTouches[i];
-                        if(t.identifier === rightTouchId && !isInvOpen) {
-                            let dx = t.clientX - lastRight.x, dy = t.clientY - lastRight.y;
-                            euler.setFromQuaternion(camera.quaternion);
-                            euler.y -= dx * 0.005; euler.x -= dy * 0.005;
-                            euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
-                            camera.quaternion.setFromEuler(euler);
-                            lastRight = {x: t.clientX, y: t.clientY};
-                        }
-                    }
-                });
-                document.getElementById('touch-right').addEventListener('touchend', (e)=>{ for(let i=0; i<e.changedTouches.length; i++) if(e.changedTouches[i].identifier === rightTouchId) rightTouchId = null; });
+                const resetLeftJoy = (e) => { e.preventDefault(); for(let i=0; i<e.changedTouches.length; i++) if(e.changedTouches[i].identifier === leftTouchId) { leftTouchId = null; moveState.forward = 0; moveState.right = 0; joyBase.style.display = 'none'; joyKnob.style.transform = 'translate(0,0)'; } };
+                document.getElementById('touch-left').addEventListener('touchend', resetLeftJoy);
             }
         }
 
+        function createNameTag(name) {
+            let canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 64;
+            let ctx = canvas.getContext('2d'); ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(0,0,256,64);
+            ctx.font = 'bold 34px monospace'; ctx.fillStyle = 'white'; ctx.textAlign = 'center'; ctx.fillText(name, 128, 44);
+            let sprite = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(canvas)}));
+            sprite.scale.set(1.5, 0.4, 1); sprite.position.y = 1.3; return sprite;
+        }
+
+        let stepTimer = 0;
         function animate() {
             requestAnimationFrame(animate);
-            let chunksProcessed = 0; while(chunkQueue.length > 0 && chunksProcessed < 2) { generateChunk(chunkQueue.shift().cx, chunkQueue.shift().cz); chunksProcessed++; }
+            let chunksProcessed = 0; while(chunkQueue.length > 0 && chunksProcessed < 2) { let chunk = chunkQueue.shift(); generateChunk(chunk.cx, chunk.cz); chunksProcessed++; }
 
             const time = performance.now(); let delta = Math.min((time - prevTime) / 1000, 0.05); 
             
+            dayTime += delta * 0.002; 
+            let sunAng = dayTime % (Math.PI*2);
+            let intensity = Math.max(0.1, Math.sin(sunAng));
+            
+            if (camera && dirLight) {
+                dirLight.position.set(Math.cos(sunAng)*40 + camera.position.x, Math.sin(sunAng)*40 + camera.position.y, Math.sin(sunAng)*10 + camera.position.z);
+                dirLight.target.position.copy(camera.position); dirLight.target.updateMatrixWorld();
+                dirLight.intensity = intensity * 1.5; ambientLight.intensity = 0.2 + intensity * 0.3;
+                let sr = Math.floor(135*intensity), sg = Math.floor(206*intensity), sb = Math.floor(235*intensity + 20*(1-intensity));
+                let skyColor = new THREE.Color(`rgb(${sr},${sg},${sb})`); scene.background = skyColor; scene.fog.color = skyColor;
+            }
+
             for(let i = drops.length - 1; i >= 0; i--) {
-                let d = drops[i]; d.ry += delta * 2; d.mesh.rotation.y = d.ry;
+                let d = drops[i]; d.ry += delta * 2; d.mesh.rotation.y = d.ry; d.mesh.position.y += Math.sin(time*0.005) * 0.005; 
                 if(camera.position.distanceTo(d.mesh.position) < 2.5) { giveItem(d.id, d.count); scene.remove(d.mesh); drops.splice(i, 1); }
             }
+            
             for(let i = particles.length - 1; i >= 0; i--) {
                 let p = particles[i]; p.life -= delta;
                 if(p.life <= 0) { scene.remove(p.mesh); particles.splice(i, 1); continue; }
-                p.mesh.position.addScaledVector(new THREE.Vector3(0,-1,0), delta*3);
+                p.vy -= 9.8 * delta; p.mesh.position.set(p.mesh.position.x + p.vx*delta, p.mesh.position.y + p.vy*delta, p.mesh.position.z + p.vz*delta);
+            }
+
+            for(let i = mobs.length - 1; i >= 0; i--) {
+                let m = mobs[i]; m.vy -= 9.8 * delta; m.rx += m.vx * delta; m.ry += m.vy * delta; m.rz += m.vz * delta;
+                if(blockData.has(`${Math.round(m.rx)},${Math.round(m.ry-1)},${Math.round(m.rz)}`)) { m.ry = Math.round(m.ry); m.vy = 0; }
+                m.mesh.position.set(m.rx, m.ry, m.rz);
             }
 
             if ((isPointerLocked || isMobile) && !isDead && !isInvOpen) {
                 let hit = getRaycastHit();
-                blockOutline.position.set(hit?.bx||0, hit?.by||0, hit?.bz||0);
-                blockOutline.visible = !!hit;
+                if (hit && hit.type === 'block') {
+                    blockOutline.position.set(hit.bx, hit.by, hit.bz);
+                    blockOutline.visible = true;
+                } else {
+                    blockOutline.visible = false;
+                }
 
-                velocity.x -= velocity.x * 12.0 * delta; velocity.z -= velocity.z * 12.0 * delta; velocity.y -= 35.0 * delta; 
+                if (handAnim > 0) { handAnim -= delta * 5; handGroup.rotation.x = Math.sin(handAnim * Math.PI) * -0.6; } else { handGroup.rotation.x = 0; }
+
+                let pBar = document.getElementById('break-progress-container'), pFill = document.getElementById('break-progress-bar');
+                if (isMining && hit && hit.type === 'block') {
+                    if (miningBlock !== hit.key) { miningBlock = hit.key; mineProgress = 0; } 
+                    else {
+                        pBar.style.display = 'block';
+                        let toolId = hotbar[activeHotbarSlot] ? hotbar[activeHotbarSlot].id : 0;
+                        mineProgress += delta * getMineSpeed(hit.blockType, toolId);
+                        pFill.style.width = Math.min(mineProgress * 100, 100) + '%';
+                        if (mineProgress >= 1) {
+                            playSound('break'); spawnParticles(hit.bx, hit.by, hit.bz, blockColors[hit.blockType]);
+                            let droppedType = removeBlock(hit.bx, hit.by, hit.bz, true); spawnDrop(hit.bx, hit.by, hit.bz, droppedType);
+                            miningBlock = null; mineProgress = 0; pBar.style.display = 'none'; handAnim = 1.0;
+                        }
+                    }
+                } else { miningBlock = null; mineProgress = 0; pBar.style.display = 'none'; }
+
+                fallVelocityTracker = velocity.y;
+                let drag = inWater ? 4.0 : 12.0, grav = inWater ? 4.0 : 35.0; 
+                velocity.x -= velocity.x * drag * delta; velocity.z -= velocity.z * drag * delta; velocity.y -= grav * delta; 
+
                 let dir = new THREE.Vector3(moveState.right, 0, -moveState.forward);
                 dir.applyQuaternion(camera.quaternion); dir.y = 0; dir.normalize();
 
-                if (dir.lengthSq() > 0.01) { velocity.x += dir.x * 40.0 * delta; velocity.z += dir.z * 40.0 * delta; }
+                let isMoving = (moveState.forward !== 0 || moveState.right !== 0);
+                
+                if (isSprinting && isMoving) {
+                    if (hunger > 2) hungerExhaustion += delta * 0.4; else isSprinting = false; 
+                } else if (isMoving) {
+                    hungerExhaustion += delta * 0.05;
+                }
+                
+                if (hungerExhaustion > 10) { hungerExhaustion = 0; hunger = Math.max(0, hunger - 1); updateHUD(); }
+                if (hunger === 0) { starvationTimer += delta; if (starvationTimer > 4) { takeDamage(1); starvationTimer = 0; } } 
+                else if (hunger >= 9 && health < 10) { regenTimer += delta; if (regenTimer > 5) { health++; updateHUD(); regenTimer = 0; } }
+
+                let speed = inWater ? 12.0 : (isSprinting ? 65.0 : 40.0);
+                let speedMult = Math.max(Math.abs(moveState.forward), Math.abs(moveState.right));
+                if (speedMult === 0 && !isMobile) speedMult = isMoving ? 1 : 0; 
+
+                if (dir.lengthSq() > 0.01) { 
+                    velocity.x += dir.x * speed * speedMult * delta; velocity.z += dir.z * speed * speedMult * delta; 
+                    walkAnim += delta * (isSprinting ? 15 : 10); handGroup.position.y = -0.2 + Math.sin(walkAnim) * 0.05; 
+                    stepTimer += delta; if(stepTimer > (isSprinting ? 0.25 : 0.4) && !inWater && canJump) { playSound('step'); stepTimer = 0; }
+                } else { handGroup.position.y = -0.2; }
 
                 let pos = camera.position;
-                pos.x += velocity.x * delta; pos.z += velocity.z * delta; pos.y += velocity.y * delta;
+                pos.x += velocity.x * delta; if (getCollisions(pos)) { pos.x -= velocity.x * delta; velocity.x = 0; }
+                pos.z += velocity.z * delta; if (getCollisions(pos)) { pos.z -= velocity.z * delta; velocity.z = 0; }
                 
-                let bBelow = blockData.has(`${Math.round(pos.x)},${Math.round(pos.y - 1.6)},${Math.round(pos.z)}`);
-                if (bBelow) { velocity.y = 0; canJump = true; pos.y = Math.round(pos.y - 1.6) + 1.6; } else { canJump = false; }
-                if (pos.y < -5) takeDamage(10);
+                if(inWater) fallVelocityTracker = 0;
+
+                pos.y += velocity.y * delta;
+                if (getCollisions(pos)) {
+                    pos.y -= velocity.y * delta;
+                    if (velocity.y < 0) {
+                        canJump = true;
+                        if (fallVelocityTracker < -22 && !inWater) { let dmg = Math.floor((Math.abs(fallVelocityTracker) - 20) / 4); if(dmg > 0) takeDamage(dmg); }
+                    }
+                    velocity.y = 0;
+                } else canJump = false;
+
+                if (getCollisions(pos)) pos.y += 0.2; 
+                if (pos.y < -5) takeDamage(10); 
                 updateChunks(false);
             }
             prevTime = time; renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => { if(camera) { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }});
+
+        function updateOtherPlayer(id, x, y, z, ry, name) {
+            if (!otherPlayers.has(id)) { 
+                let m = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.8, 0.8), new THREE.MeshStandardMaterial({color: Math.random()*0xffffff})); m.castShadow=true; 
+                m.add(createNameTag(name || "Игрок")); scene.add(m); otherPlayers.set(id, m); 
+            }
+            let p = otherPlayers.get(id); p.position.set(x, y - 0.9, z); p.rotation.y = ry;
+        }
+        function sendNetData(data) { connections.forEach(conn => { if (conn && conn.open) conn.send(data); }); }
+        
+        function handleNetData(data, senderConn) {
+            if (data.type === 'pos') { updateOtherPlayer(data.id, data.x, data.y, data.z, data.ry, data.name); if (isHost) sendNetData(data); }
+            else if (data.type === 'block') {
+                if (data.action === 'place') { worldMods[`${data.x},${data.y},${data.z}`] = {action: 'place', type: data.blockType}; addBlock(data.x, data.y, data.z, data.blockType, false); }
+                if (data.action === 'break') { worldMods[`${data.x},${data.y},${data.z}`] = {action: 'break'}; spawnParticles(data.x, data.y, data.z, blockColors[blockData.get(`${data.x},${data.y},${data.z}`)?.type]); removeBlock(data.x, data.y, data.z, false); playSound('break'); }
+                if (isHost) sendNetData(data);
+            }
+            else if (data.type === 'sync_world') {
+                worldMods = data.changes;
+                for (let key in worldMods) { let [x, y, z] = key.split(',').map(Number); if (worldMods[key].action === 'place') addBlock(x, y, z, worldMods[key].type, false); if (worldMods[key].action === 'break') removeBlock(x, y, z, false); }
+            }
+            else if (data.type === 'mob_spawn') { spawnMob(data.mob.x, data.mob.y, data.mob.z, data.mob.type); mobs[mobs.length-1].id = data.mob.id; }
+            else if (data.type === 'mob_die') { let m = mobs.find(x=>x.id===data.id); if(m){ scene.remove(m.mesh); mobs = mobs.filter(x=>x!==m); } }
+            else if (data.type === 'pvp_hit') { if (peer && data.targetId === peer.id) takeDamage(data.damage); if (isHost) sendNetData(data); }
+            else if (data.type === 'chat') { addChatMessage(data.sender, data.text, "#ccc"); if(isHost) sendNetData(data); }
+        }
+
+        function setupConnectionEvents(conn) {
+            conn.on('open', () => { document.getElementById('players-info').innerText = `Игроков: ${connections.length + 1}`; if (isHost) conn.send({ type: 'sync_world', changes: worldMods }); });
+            conn.on('data', (data) => handleNetData(data, conn));
+            conn.on('close', () => { 
+                connections = connections.filter(c => c !== conn); 
+                if (otherPlayers.has(conn.peer)) { 
+                    let pMesh = otherPlayers.get(conn.peer); scene.remove(pMesh); pMesh.material.dispose(); pMesh.geometry.dispose();
+                    pMesh.children.forEach(c => { if(c.material) { if(c.material.map) c.material.map.dispose(); c.material.dispose(); } });
+                    otherPlayers.delete(conn.peer); 
+                } 
+                document.getElementById('players-info').innerText = `Игроков: ${connections.length + 1}`; 
+            });
         }
 
         const statusDiv = document.getElementById('status');
         document.getElementById('btn-single').addEventListener('click', () => { isHost = true; initEngine(); document.getElementById('menu').style.display = 'none'; });
         document.getElementById('btn-host').addEventListener('click', () => {
             statusDiv.innerText = 'Создание...'; peer = new Peer();
-            peer.on('open', (id) => { isHost = true; document.getElementById('server-id-display').style.display = 'block'; document.getElementById('sid-text').innerText = id; initEngine(); document.getElementById('menu').style.display = 'none'; });
+            peer.on('open', (id) => {
+                isHost = true; document.getElementById('server-id-display').style.display = 'block'; document.getElementById('sid-text').innerText = id;
+                initEngine(); document.getElementById('menu').style.display = 'none';
+                setInterval(() => { if (camera && !isDead) sendNetData({ type: 'pos', id: peer.id, x: camera.position.x, y: camera.position.y, z: camera.position.z, ry: euler.y, name: myName }); }, 50);
+            });
+            peer.on('connection', (conn) => { connections.push(conn); setupConnectionEvents(conn); });
         });
         document.getElementById('btn-join').addEventListener('click', () => {
-            const hostId = document.getElementById('join-id').value.trim(); if (!hostId) return;
-            peer = new Peer(); peer.on('open', () => { peer.connect(hostId).on('open', () => { initEngine(); document.getElementById('menu').style.display = 'none'; }); });
+            const hostId = document.getElementById('join-id').value.trim(); if (!hostId) return; statusDiv.innerText = 'Подключение...';
+            peer = new Peer();
+            peer.on('open', () => {
+                const conn = peer.connect(hostId);
+                conn.on('open', () => { connections.push(conn); setupConnectionEvents(conn); initEngine(); document.getElementById('menu').style.display = 'none';
+                setInterval(() => { if (camera && !isDead) sendNetData({ type: 'pos', id: peer.id, x: camera.position.x, y: camera.position.y, z: camera.position.z, ry: euler.y, name: myName }); }, 50); });
+                conn.on('error', () => { statusDiv.innerText = 'Ошибка: Проверьте ID'; });
+            });
         });
     </script>
 </body>
