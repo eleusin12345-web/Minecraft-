@@ -1064,4 +1064,206 @@
     </script>
 </body>
 </html>
-```
+
+<!-- ... existing code ... -->
+        /* Инвентарь UI (Компактный и стильный) */
+        #inventory-ui { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 150; display: none; align-items: center; justify-content: center; pointer-events: auto; backdrop-filter: blur(2px); }
+        .inv-window { background: #c6c6c6; border: 3px solid #333; border-top-color: #fff; border-left-color: #fff; padding: 12px; width: 340px; display: flex; flex-direction: column; align-items: center; position: relative; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .close-btn { position: absolute; top: -15px; right: -15px; background: #e74c3c; color: white; border: 3px solid #222; font-family: inherit; font-size: 22px; width: 40px; height: 40px; cursor: pointer; font-weight: bold; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 200; transition: 0.2s; }
+        .close-btn:hover { background: #ff6b6b; transform: scale(1.1); }
+        #inv-mode-btn { background: #555; color: #55ff55; border: 2px solid #222; font-family: inherit; font-size: 14px; padding: 3px 6px; margin-bottom: 8px; cursor: pointer; border-radius: 3px; width: 100%; text-align: center; }
+<!-- ... existing code ... -->
+        #btn-place { bottom: 105px; right: 25px; width: 55px; height: 55px; font-size: 22px; } 
+        #btn-inv-mobile { top: 12px; right: 12px; width: 42px; height: 42px; border-radius: 6px; font-size: 20px; }
+
+        .emoji-icon { font-size: 28px; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); pointer-events: none; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- ... existing code ... -->
+        <button class="btn" onclick="location.reload()">В меню</button>
+    </div>
+
+    <!-- Инвентарь UI (Клик по фону закрывает) -->
+    <div id="inventory-ui" onclick="if(event.target === this) toggleInventory()">
+        <div class="inv-window" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="toggleInventory()">X</button>
+            <h3 style="margin:0 0 6px 0; color:#333; font-size:22px;" id="inv-title">Инвентарь</h3>
+<!-- ... existing code ... -->
+            <div id="inv-main"></div>
+            <div style="height: 4px;"></div>
+            <div id="inv-hotbar" class="inv-row"></div>
+        </div>
+    </div>
+    
+    <div id="cursor-item"><div class="emoji-icon" id="cursor-icon"></div><div class="item-count" id="cursor-count"></div></div>
+
+    <!-- Чат -->
+    <div id="chat-container">
+<!-- ... existing code ... -->
+        const CHUNK_SIZE = 16, VIEW_DISTANCE = 3, WATER_LEVEL = 12;
+        const simplex = new SimplexNoise('craft-seed'), simplex3D = new SimplexNoise('craft-cave');
+        
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window);
+        let gameStarted = false, isPointerLocked = false;
+        let myName = "Player";
+        
+        const INV_SIZE = 27, HOTBAR_SIZE = 9, CRAFT_SIZE = 9;
+        let inventory = new Array(INV_SIZE).fill(null), hotbar = new Array(HOTBAR_SIZE).fill(null), craftGrid = new Array(CRAFT_SIZE).fill(null), craftResult = null;
+        let activeHotbarSlot = 0, cursorItem = null, isInvOpen = false, invMode = 'all', currentCraftMode = 'inv';
+
+        const ITEM_ICONS = {
+            1: '🟩', 2: '🟫', 3: '🪨', 4: '🪵', 5: '🍃', 6: '🪚', 7: '💧', 8: '🧱', 9: '☁️', 
+            11: '🛠️', 12: '🏖️', 13: '🔥', 14: '🧰', 15: '🔩',
+            100: '🦯', 101: '🍎', 102: '🍖', 103: '🦴', 109: '🍎',
+            110: '🥈', 111: '🥇', 112: '💎', 113: '⬛', 114: '🔴', 115: '🟤', 116: '🧶', 117: '🪨', 118: '🪶',
+            201: '⛏️', 202: '🪓', 203: '🪏', 204: '⛏️', 205: '🗡️',
+            211: '⛏️', 212: '🪓', 213: '🪏', 214: '⛏️', 215: '🗡️',
+            221: '⛏️', 222: '🪓', 223: '🪏', 224: '⛏️', 225: '🗡️',
+            231: '⛏️', 232: '🪓', 233: '🪏', 234: '⛏️', 235: '🗡️',
+            241: '🪖', 242: '👕', 243: '👖', 244: '🥾',
+            251: '🪖', 252: '👕', 253: '👖', 254: '🥾',
+            261: '🪖', 262: '👕', 263: '👖', 264: '🥾',
+            270: '🏮', 271: '🚪', 272: '🕳️', 273: '🚧', 274: '⛩️', 275: '🧱', 276: '🪜', 277: '🪣', 278: '🛶', 279: '✂️', 280: '🎣',
+            281: '⬜', 282: '🟨', 283: '🟦'
+        };
+
+        hotbar[0] = { id: 201, count: 1 }; hotbar[1] = { id: 205, count: 1 }; hotbar[2] = { id: 4, count: 64 }; hotbar[3] = { id: 102, count: 10 };
+
+        const RECIPES = [
+            { in: "4,|", out: {id: 6, count: 4} }, // Доски
+            { in: "6,|,6,|", out: {id: 100, count: 4} }, // Палки
+            { in: "6,6,|,6,6,|", out: {id: 11, count: 1} }, // Верстак
+            { in: "8,8,8,|,8,0,8,|,8,8,8,|", out: {id: 13, count: 1} }, // Печь
+            { in: "6,6,6,|,6,0,6,|,6,6,6,|", out: {id: 14, count: 1} }, // Сундук
+            { in: "113,|,100,|", out: {id: 270, count: 4} }, // Факел
+            // Кирки
+            { in: "6,6,6,|,0,100,0,|,0,100,0,|", out: {id: 201, count: 1} },
+            { in: "8,8,8,|,0,100,0,|,0,100,0,|", out: {id: 211, count: 1} },
+            { in: "110,110,110,|,0,100,0,|,0,100,0,|", out: {id: 221, count: 1} },
+            { in: "112,112,112,|,0,100,0,|,0,100,0,|", out: {id: 231, count: 1} },
+            // Топоры
+            { in: "6,6,|,6,100,|,0,100,|", out: {id: 202, count: 1} }, { in: "6,6,|,100,6,|,100,0,|", out: {id: 202, count: 1} },
+            { in: "8,8,|,8,100,|,0,100,|", out: {id: 212, count: 1} }, { in: "8,8,|,100,8,|,100,0,|", out: {id: 212, count: 1} },
+            { in: "110,110,|,110,100,|,0,100,|", out: {id: 222, count: 1} }, { in: "110,110,|,100,110,|,100,0,|", out: {id: 222, count: 1} },
+            { in: "112,112,|,112,100,|,0,100,|", out: {id: 232, count: 1} }, { in: "112,112,|,100,112,|,100,0,|", out: {id: 232, count: 1} },
+            // Мечи
+            { in: "6,|,6,|,100,|", out: {id: 205, count: 1} },
+            { in: "8,|,8,|,100,|", out: {id: 215, count: 1} },
+            { in: "110,|,110,|,100,|", out: {id: 225, count: 1} },
+            { in: "112,|,112,|,100,|", out: {id: 235, count: 1} },
+            // Лопаты
+            { in: "6,|,100,|,100,|", out: {id: 203, count: 1} },
+            { in: "8,|,100,|,100,|", out: {id: 213, count: 1} },
+            { in: "110,|,100,|,100,|", out: {id: 223, count: 1} },
+            { in: "112,|,100,|,100,|", out: {id: 233, count: 1} },
+            // Мотыги
+            { in: "6,6,|,0,100,|,0,100,|", out: {id: 204, count: 1} }, { in: "6,6,|,100,0,|,100,0,|", out: {id: 204, count: 1} },
+            { in: "8,8,|,0,100,|,0,100,|", out: {id: 214, count: 1} }, { in: "8,8,|,100,0,|,100,0,|", out: {id: 214, count: 1} },
+            { in: "110,110,|,0,100,|,0,100,|", out: {id: 224, count: 1} }, { in: "110,110,|,100,0,|,100,0,|", out: {id: 224, count: 1} },
+            { in: "112,112,|,0,100,|,0,100,|", out: {id: 234, count: 1} }, { in: "112,112,|,100,0,|,100,0,|", out: {id: 234, count: 1} },
+            // Броня Кожа (115)
+            { in: "115,115,115,|,115,0,115,|", out: {id: 241, count: 1} },
+            { in: "115,0,115,|,115,115,115,|,115,115,115,|", out: {id: 242, count: 1} },
+            { in: "115,115,115,|,115,0,115,|,115,0,115,|", out: {id: 243, count: 1} },
+            { in: "115,0,115,|,115,0,115,|", out: {id: 244, count: 1} },
+            // Броня Железо (110)
+            { in: "110,110,110,|,110,0,110,|", out: {id: 251, count: 1} },
+            { in: "110,0,110,|,110,110,110,|,110,110,110,|", out: {id: 252, count: 1} },
+            { in: "110,110,110,|,110,0,110,|,110,0,110,|", out: {id: 253, count: 1} },
+            { in: "110,0,110,|,110,0,110,|", out: {id: 254, count: 1} },
+            // Броня Алмаз (112)
+            { in: "112,112,112,|,112,0,112,|", out: {id: 261, count: 1} },
+            { in: "112,0,112,|,112,112,112,|,112,112,112,|", out: {id: 262, count: 1} },
+            { in: "112,112,112,|,112,0,112,|,112,0,112,|", out: {id: 263, count: 1} },
+            { in: "112,0,112,|,112,0,112,|", out: {id: 264, count: 1} },
+            // Декор и блоки
+            { in: "6,6,|,6,6,|,6,6,|", out: {id: 271, count: 3} }, // Дверь
+            { in: "6,6,6,|,6,6,6,|", out: {id: 272, count: 2} }, // Люк
+            { in: "6,100,6,|,6,100,6,|", out: {id: 273, count: 3} }, // Забор
+            { in: "100,6,100,|,100,6,100,|", out: {id: 274, count: 1} }, // Калитка
+            { in: "6,6,6,|", out: {id: 277, count: 6} }, // Плита
+            { in: "110,110,110,|,110,110,110,|,110,110,110,|", out: {id: 281, count: 1} },
+            { in: "111,111,111,|,111,111,111,|,111,111,111,|", out: {id: 282, count: 1} },
+            { in: "112,112,112,|,112,112,112,|,112,112,112,|", out: {id: 283, count: 1} }
+        ];
+
+        let health = 10, hunger = 10, hungerExhaustion = 0, isDead = false;
+<!-- ... existing code ... -->
+        function renderInventory() {
+            const drawSlot = (el, item) => {
+                if(item && ITEM_ICONS[item.id]) {
+                    el.innerHTML = `<div class="emoji-icon">${ITEM_ICONS[item.id]}</div><div class="item-count">${item.count>1?item.count:''}</div>`;
+                } else if(item) {
+                    el.innerHTML = `<div class="emoji-icon">❓</div><div class="item-count">${item.count>1?item.count:''}</div>`;
+                } else el.innerHTML = '';
+            };
+            document.querySelectorAll('.inv-slot').forEach(el => {
+                let type = el.dataset.type, idx = parseInt(el.dataset.idx);
+                if(type === 'main') drawSlot(el, inventory[idx]); if(type === 'hotbar') drawSlot(el, hotbar[idx]);
+                if(type === 'craft') drawSlot(el, craftGrid[idx]); if(type === 'craftOut') drawSlot(el, craftResult);
+            });
+            for(let i=0; i<9; i++) drawSlot(document.getElementById(`hud-slot-${i}`), hotbar[i]);
+
+            let cursorEl = document.getElementById('cursor-item');
+            if(cursorItem) {
+                cursorEl.style.display = 'block'; 
+                document.getElementById('cursor-icon').innerHTML = ITEM_ICONS[cursorItem.id] || '❓';
+                document.getElementById('cursor-count').innerText = cursorItem.count > 1 ? cursorItem.count : '';
+            } else cursorEl.style.display = 'none';
+        }
+
+        function getCraftString(arr, cols) {
+<!-- ... existing code ... -->
+        function giveItem(id, count) {
+            playSound('step');
+            for(let i=0; i<HOTBAR_SIZE; i++) { if(hotbar[i] && hotbar[i].id === id && hotbar[i].count < 64) { let s = 64 - hotbar[i].count, add = Math.min(s, count); hotbar[i].count += add; count -= add; if(count<=0){ renderInventory(); return;} } }
+            for(let i=0; i<INV_SIZE; i++) { if(inventory[i] && inventory[i].id === id && inventory[i].count < 64) { let s = 64 - inventory[i].count, add = Math.min(s, count); inventory[i].count += add; count -= add; if(count<=0){ renderInventory(); return;} } }
+            for(let i=0; i<HOTBAR_SIZE; i++) { if(!hotbar[i]) { hotbar[i] = {id, count}; renderInventory(); return; } }
+            for(let i=0; i<INV_SIZE; i++) { if(!inventory[i]) { inventory[i] = {id, count}; renderInventory(); return; } }
+            
+            // Если инвентарь полон, выбрасываем предмет в мир (ИСПРАВЛЕН БАГ С ПРОПАЖЕЙ ВЕЩЕЙ)
+            let pos = camera.position;
+            spawnDrop(pos.x, pos.y, pos.z, id, count);
+        }
+
+        function saveWorld() {
+<!-- ... existing code ... -->
+        function playSound(type) {
+            if(!audioCtx) return;
+            let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            let t = audioCtx.currentTime;
+            if (type === 'step') { osc.type = 'square'; osc.frequency.setValueAtTime(80, t); osc.frequency.exponentialRampToValueAtTime(10, t + 0.05); gain.gain.setValueAtTime(0.05, t); gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05); osc.start(t); osc.stop(t + 0.05); } 
+            else if (type === 'hit') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, t); osc.frequency.exponentialRampToValueAtTime(50, t + 0.1); gain.gain.setValueAtTime(0.2, t); gain.gain.linearRampToValueAtTime(0, t + 0.1); osc.start(t); osc.stop(t + 0.1); } 
+            else if (type === 'break') { osc.type = 'square'; osc.frequency.setValueAtTime(150, t); osc.frequency.exponentialRampToValueAtTime(30, t + 0.1); gain.gain.setValueAtTime(0.2, t); gain.gain.linearRampToValueAtTime(0, t + 0.1); osc.start(t); osc.stop(t + 0.1); }
+            else if (type === 'eat') { osc.type = 'sine'; osc.frequency.setValueAtTime(200, t); osc.frequency.linearRampToValueAtTime(300, t + 0.15); gain.gain.setValueAtTime(0.3, t); gain.gain.linearRampToValueAtTime(0, t + 0.15); osc.start(t); osc.stop(t + 0.15); }
+        }
+
+        const blockColors = { 1:0x559c3f, 2:0x7a5c3d, 3:0x888888, 4:0x5c4033, 5:0x3a7a3a, 6:0xcda26f, 8:0x777777, 10:0x666666, 11:0x8b5a2b, 12:0x5c4033, 15:0x888888 };
+
+        function getMineSpeed(blockId, toolId) {
+            let speed = 1.0; 
+            if ([3, 8, 10, 15].includes(blockId)) speed = 0.15;
+            if (blockId === 1 || blockId === 2) speed = 1.5; 
+            if (blockId === 4 || blockId === 6 || blockId === 11) speed = 0.7;
+            if (blockId === 5) speed = 5.0; 
+            
+            if ([201, 211, 221, 231].includes(toolId) && [3, 8, 10, 15].includes(blockId)) {
+                if(toolId===201) speed = 1.5; if(toolId===211) speed = 3.0; if(toolId===221) speed = 6.0; if(toolId===231) speed = 9.0;
+            }
+            if ([202, 212, 222, 232].includes(toolId) && [4, 6, 14, 11].includes(blockId)) speed = 4.0;
+            if ([203, 213, 223, 233].includes(toolId) && [1, 2, 12].includes(blockId)) speed = 4.0;
+            if ([205, 215, 225, 235].includes(toolId) && blockId === 5) speed = 8.0; 
+            return speed;
+        }
+        function getWeaponDamage(toolId) {
+            if ([205].includes(toolId)) return 3; 
+            if ([215].includes(toolId)) return 4; 
+            if ([225].includes(toolId)) return 6; 
+            if ([235].includes(toolId)) return 8; 
+            if (toolId >= 201 && toolId <= 234) return 2; 
+            return 1;
+        }
+
+        let peer, connections = [], otherPlayers = new Map(), isHost = false;
+<!-- ... existing code ... -->
